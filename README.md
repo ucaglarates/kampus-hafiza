@@ -3,9 +3,6 @@
 KampüsHafıza, Manisa Celal Bayar Üniversitesi öğrencilerinin bilgi ve
 deneyimlerini paylaşabildiği bağımsız bir öğrenci topluluğu uygulamasıdır.
 
-> Bu proje Manisa Celal Bayar Üniversitesi veya herhangi bir sosyal medya
-> kuruluşunun resmî ürünü, iştiraki ya da sponsorluk çalışması değildir.
-
 ## Özellikler
 
 - `@ogr.cbu.edu.tr` öğrenci e-postasıyla kayıt ve e-posta doğrulama
@@ -27,17 +24,3 @@ deneyimlerini paylaşabildiği bağımsız bir öğrenci topluluğu uygulamasıd
 - Vite
 - Supabase Authentication, Database, Realtime ve Storage
 - CSS
-
-## Güvenlik
-
-- Gizli anahtarlar repoya eklenmez.
-- Yetkilendirme yalnızca arayüzde değil Supabase Row Level Security
-  politikalarıyla da uygulanır.
-- Kullanıcı rolleri normal kullanıcılar tarafından değiştirilemez.
-- Şikâyet kayıtları yalnızca bildiren kullanıcı ve yetkili moderatörlerce
-  görüntülenebilir.
-
-## Lisans ve Kullanım
-
-Bu depo eğitim ve portfolyo amacıyla paylaşılmaktadır. Marka, üniversite ve
-üçüncü taraf içerik hakları kendi sahiplerine aittir.

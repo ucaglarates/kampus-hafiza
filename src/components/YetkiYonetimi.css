@@ -1,0 +1,274 @@
+/* ==========================================================
+   1. KURUCU YETKİ PANELİ
+========================================================== */
+
+.yetki-overlay {
+  position: fixed;
+  z-index: 2100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 28px;
+  background: rgba(2, 9, 16, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.yetki-paneli {
+  width: min(100%, 850px);
+  max-height: min(820px, calc(100vh - 56px));
+  overflow: hidden;
+  border: 1px solid rgba(255, 205, 101, 0.3);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 90% 5%, rgba(255, 205, 101, 0.14), transparent 30%),
+    linear-gradient(150deg, #12243a, #081623);
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.5);
+  color: #edf3f8;
+}
+
+.yetki-paneli__ust {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.yetki-paneli__ust span {
+  color: #ffd783;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.yetki-paneli__ust h2 {
+  margin: 7px 0 5px;
+  font-size: clamp(25px, 4vw, 34px);
+  letter-spacing: -0.04em;
+}
+
+.yetki-paneli__ust p {
+  margin: 0;
+  color: #91a2b5;
+  font-size: 12px;
+}
+
+.yetki-paneli__ust > button {
+  display: grid;
+  flex: 0 0 39px;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #dce5ee;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* ==========================================================
+   2. ARAMA VE KULLANICI LİSTESİ
+========================================================== */
+
+.yetki-arama {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 22px 28px 12px;
+  padding: 0 15px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.yetki-arama span {
+  color: #8395aa;
+  font-size: 20px;
+}
+
+.yetki-arama input {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #edf3f8;
+  font: inherit;
+  font-size: 13px;
+}
+
+.yetki-arama input::placeholder {
+  color: #718298;
+}
+
+.yetki-mesaji {
+  margin: 10px 28px;
+  padding: 11px 13px;
+  border-radius: 11px;
+  font-size: 11px;
+}
+
+.yetki-mesaji--hata {
+  background: rgba(255, 93, 110, 0.1);
+  color: #ffadb6;
+}
+
+.yetki-mesaji--bilgi {
+  background: rgba(97, 230, 197, 0.09);
+  color: #b8f8e8;
+}
+
+.yetki-listesi {
+  max-height: 490px;
+  overflow-y: auto;
+  padding: 10px 28px 28px;
+}
+
+.yetki-kullanicisi {
+  display: grid;
+  grid-template-columns: auto 1fr minmax(180px, 0.45fr);
+  align-items: center;
+  gap: 14px;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.yetki-avatar {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #61e6c5, #8aa8ff);
+  color: #06111d;
+  font-weight: 900;
+}
+
+.yetki-kullanicisi__bilgi strong,
+.yetki-kullanicisi__bilgi span,
+.yetki-kullanicisi__bilgi small {
+  display: block;
+}
+
+.yetki-kullanicisi__bilgi em {
+  display: block;
+  margin-top: 6px;
+  color: #d7b96e;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.yetki-kullanicisi__bilgi strong {
+  font-size: 13px;
+}
+
+.yetki-kullanicisi__bilgi span {
+  margin: 3px 0;
+  color: #9aabbd;
+  font-size: 10px;
+}
+
+.yetki-kullanicisi__bilgi small {
+  color: #708196;
+  font-size: 9px;
+}
+
+.yetki-kullanicisi label > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #7f91a5;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.yetki-kullanicisi select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid rgba(255, 205, 101, 0.22);
+  border-radius: 11px;
+  outline: 0;
+  background: #13263b;
+  color: #ffe3a6;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.yetki-seviye-butonu {
+  grid-column: 2 / -1;
+  justify-self: end;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(138, 168, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(138, 168, 255, 0.08);
+  color: #cad6ff;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.yetki-seviye-butonu:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.yetki-bos {
+  margin: 35px 0;
+  color: #8294a8;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ==========================================================
+   3. TELEFON GÖRÜNÜMÜ
+========================================================== */
+
+@media (max-width: 650px) {
+  .yetki-overlay {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .yetki-paneli {
+    max-height: calc(100vh - 24px);
+    border-radius: 23px;
+  }
+
+  .yetki-paneli__ust {
+    padding: 22px 19px;
+  }
+
+  .yetki-arama {
+    margin-right: 19px;
+    margin-left: 19px;
+  }
+
+  .yetki-listesi {
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .yetki-kullanicisi {
+    grid-template-columns: auto 1fr;
+  }
+
+  .yetki-kullanicisi label {
+    grid-column: 1 / -1;
+  }
+
+  .yetki-seviye-butonu {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+}

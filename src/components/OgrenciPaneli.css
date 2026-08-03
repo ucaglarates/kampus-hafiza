@@ -1,0 +1,467 @@
+/* ==========================================================
+   1. ÖĞRENCİ PANELİNİN ANA KARTI
+========================================================== */
+
+.ogrenci-paneli {
+  position: relative;
+  width: min(calc(100% - 48px), var(--container));
+  margin: -34px auto 48px;
+  overflow: hidden;
+
+  border: 1px solid rgba(97, 230, 197, 0.22);
+  border-radius: 28px;
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(138, 168, 255, 0.13),
+      transparent 28%
+    ),
+    linear-gradient(145deg, rgba(16, 36, 58, 0.96), rgba(9, 24, 39, 0.96));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+}
+
+.ogrenci-paneli--kurucu {
+  border-color: rgba(255, 205, 101, 0.42);
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(255, 199, 92, 0.18),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 8% 90%,
+      rgba(138, 168, 255, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(145deg, rgba(24, 34, 52, 0.98), rgba(9, 24, 39, 0.98));
+  box-shadow:
+    0 30px 85px rgba(0, 0, 0, 0.3),
+    0 0 45px rgba(255, 199, 92, 0.08);
+}
+
+/* ==========================================================
+   2. ÖĞRENCİ KİMLİĞİ VE DOĞRULAMA ROZETİ
+========================================================== */
+
+.ogrenci-paneli__ust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+
+  padding: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ogrenci-kimligi {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.ogrenci-kimligi__avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+
+  width: 62px;
+  height: 62px;
+  border-radius: 19px;
+  background: linear-gradient(135deg, #61e6c5, #8aa8ff);
+  box-shadow: 0 15px 40px rgba(97, 230, 197, 0.2);
+
+  color: #06111d;
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.ogrenci-kimligi__avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.ogrenci-paneli__etiket {
+  color: #61e6c5;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.ogrenci-paneli__etiket--yetkili {
+  color: #ffd783;
+  text-shadow: 0 0 18px rgba(255, 205, 101, 0.2);
+}
+
+.ogrenci-kimligi h2 {
+  margin: 6px 0 3px;
+  font-size: clamp(24px, 4vw, 34px);
+  letter-spacing: -0.035em;
+}
+
+.ogrenci-kimligi p {
+  margin: 0;
+  color: #a9b8ca;
+  font-size: 12px;
+}
+
+.dogrulanmis-rozet {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 10px 14px;
+  border: 1px solid rgba(97, 230, 197, 0.25);
+  border-radius: 999px;
+  background: rgba(97, 230, 197, 0.08);
+
+  color: #b8f8e8;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.dogrulanmis-rozet span {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #61e6c5;
+  color: #06111d;
+}
+
+.test-sonucu-rozeti {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border: 1px solid rgba(138, 168, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(138, 168, 255, 0.09);
+  color: #d6dfff;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.test-sonucu-rozeti span {
+  color: #ffd783;
+}
+
+.moderator-rozeti {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 205, 101, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 205, 101, 0.09);
+  color: #ffe3a6;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.moderator-rozeti span {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd783, #ffae58);
+  color: #171006;
+}
+
+/* ==========================================================
+   3. PROFİL BİLGİLERİ VE ALANLAR
+========================================================== */
+
+.ogrenci-paneli__icerik {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 20px;
+  padding: 26px 30px;
+}
+
+.ogrenci-bilgileri {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.ogrenci-bilgileri article,
+.ogrenci-alanlari {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.ogrenci-bilgileri span,
+.ogrenci-alanlari__baslik > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8192a7;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ogrenci-alanlari__baslik {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+}
+
+.ogrenci-alanlari__baslik > span {
+  margin-bottom: 0;
+}
+
+.ogrenci-alanlari__baslik button {
+  padding: 5px 8px;
+  border: 1px solid rgba(97, 230, 197, 0.18);
+  border-radius: 8px;
+  background: rgba(97, 230, 197, 0.07);
+  color: #b8f8e8;
+  font: inherit;
+  font-size: 8px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.ogrenci-bilgileri strong {
+  color: #eef3f8;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ogrenci-alanlari > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.ogrenci-alanlari strong {
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: rgba(138, 168, 255, 0.1);
+  color: #cdd8ff;
+  font-size: 10px;
+}
+
+.ogrenci-alanlari p {
+  margin: 0;
+  color: #a9b8ca;
+  font-size: 12px;
+}
+
+.topluluk-seviyesi {
+  grid-column: 1 / -1;
+  padding: 16px;
+  border: 1px solid rgba(255, 205, 101, 0.16);
+  border-radius: 15px;
+  background: rgba(255, 205, 101, 0.045);
+}
+
+.topluluk-seviyesi__ust {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topluluk-seviyesi__ust > span {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffd783, #ffae58);
+  color: #171006;
+  font-size: 17px;
+}
+
+.topluluk-seviyesi__ust div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.topluluk-seviyesi__ust small {
+  color: #9b885e;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.topluluk-seviyesi__ust strong {
+  color: #ffe3a6;
+  font-size: 13px;
+}
+
+.topluluk-seviyesi__ust b {
+  color: #ffd783;
+  font-size: 12px;
+}
+
+.topluluk-seviyesi__cubuk {
+  height: 6px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.topluluk-seviyesi__cubuk span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffd783, #ffae58);
+}
+
+.topluluk-seviyesi p {
+  margin: 8px 0 0;
+  color: #8d9caf;
+  font-size: 9px;
+}
+
+/* ==========================================================
+   4. PROFİL İLERLEMESİ VE TEST BUTONU
+========================================================== */
+
+.ogrenci-paneli__alt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+
+  padding: 24px 30px 30px;
+  background: rgba(3, 12, 21, 0.22);
+}
+
+.profil-ilerlemesi {
+  flex: 1;
+  max-width: 650px;
+}
+
+.profil-ilerlemesi__baslik,
+.profil-adimlari {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.profil-ilerlemesi__baslik {
+  margin-bottom: 9px;
+  color: #a9b8ca;
+  font-size: 11px;
+}
+
+.profil-ilerlemesi__baslik strong {
+  color: #61e6c5;
+}
+
+.profil-ilerlemesi__cubuk {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.profil-ilerlemesi__cubuk span {
+  display: block;
+  width: 66.66%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #61e6c5, #8aa8ff);
+}
+
+.profil-adimlari {
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.profil-adimi {
+  color: #78899e;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.profil-adimi--tamam {
+  color: #b8f8e8;
+}
+
+.ogrenci-paneli__butonlar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ==========================================================
+   5. TABLET VE TELEFON GÖRÜNÜMÜ
+========================================================== */
+
+@media (max-width: 900px) {
+  .ogrenci-paneli__icerik {
+    grid-template-columns: 1fr;
+  }
+
+  .ogrenci-paneli__alt {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .profil-ilerlemesi {
+    max-width: none;
+  }
+
+  .ogrenci-paneli__butonlar {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 650px) {
+  .ogrenci-paneli {
+    width: calc(100% - 32px);
+    margin-top: -18px;
+  }
+
+  .ogrenci-paneli__ust {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 22px;
+  }
+
+  .ogrenci-kimligi {
+    align-items: flex-start;
+  }
+
+  .ogrenci-kimligi__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+  }
+
+  .ogrenci-paneli__icerik,
+  .ogrenci-paneli__alt {
+    padding: 20px 22px;
+  }
+
+  .ogrenci-bilgileri {
+    grid-template-columns: 1fr;
+  }
+
+  .profil-adimlari {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ogrenci-paneli__alt .button {
+    width: 100%;
+  }
+}

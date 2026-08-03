@@ -1,0 +1,205 @@
+/* ==========================================================
+   1. İLGİ ALANLARI PENCERESİ
+========================================================== */
+
+.ilgi-overlay {
+  position: fixed;
+  z-index: 2050;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 28px;
+  background: rgba(2, 9, 16, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.ilgi-paneli {
+  width: min(100%, 760px);
+  max-height: calc(100vh - 56px);
+  overflow-y: auto;
+  border: 1px solid rgba(97, 230, 197, 0.22);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 92% 5%, rgba(138, 168, 255, 0.15), transparent 30%),
+    linear-gradient(150deg, #10243a, #081623);
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.5);
+  color: #edf3f8;
+}
+
+.ilgi-paneli__ust {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 27px 28px 21px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ilgi-paneli__ust span {
+  color: #61e6c5;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.ilgi-paneli__ust h2 {
+  margin: 7px 0 5px;
+  font-size: clamp(25px, 4vw, 34px);
+  letter-spacing: -0.04em;
+}
+
+.ilgi-paneli__ust p,
+.ilgi-paneli__alt p {
+  margin: 0;
+  color: #91a2b5;
+  font-size: 11px;
+}
+
+.ilgi-paneli__ust > button {
+  display: grid;
+  flex: 0 0 39px;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #dce5ee;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.ilgi-secim-bilgisi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 28px 10px;
+}
+
+.ilgi-secim-bilgisi strong {
+  color: #b8f8e8;
+  font-size: 12px;
+}
+
+.ilgi-secim-bilgisi span {
+  color: #8193a7;
+  font-size: 9px;
+  text-align: right;
+}
+
+/* ==========================================================
+   2. SEÇİLEBİLİR ALANLAR
+========================================================== */
+
+.ilgi-alanlari-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px 28px 24px;
+}
+
+.ilgi-alani {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #b6c2d0;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ilgi-alani > span {
+  display: grid;
+  flex: 0 0 27px;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #8496aa;
+}
+
+.ilgi-alani--secili {
+  border-color: rgba(97, 230, 197, 0.5);
+  background: rgba(97, 230, 197, 0.1);
+  color: #edfffa;
+}
+
+.ilgi-alani--secili > span {
+  background: #61e6c5;
+  color: #06111d;
+}
+
+.ilgi-hatasi {
+  margin: 0 28px 15px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 93, 110, 0.1);
+  color: #ffadb6;
+  font-size: 10px;
+}
+
+.ilgi-paneli__alt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 19px 28px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(3, 12, 21, 0.25);
+}
+
+/* ==========================================================
+   3. TELEFON GÖRÜNÜMÜ
+========================================================== */
+
+@media (max-width: 650px) {
+  .ilgi-overlay {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .ilgi-paneli {
+    max-height: calc(100vh - 24px);
+    border-radius: 23px;
+  }
+
+  .ilgi-paneli__ust,
+  .ilgi-paneli__alt {
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .ilgi-secim-bilgisi {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .ilgi-secim-bilgisi span {
+    text-align: left;
+  }
+
+  .ilgi-alanlari-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .ilgi-paneli__alt {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+

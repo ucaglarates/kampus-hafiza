@@ -1,0 +1,511 @@
+/* ==========================================================
+   1. KAYIT EKRANININ ARKA PLANI
+========================================================== */
+
+.kayit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+  background: rgba(2, 9, 17, 0.82);
+  backdrop-filter: blur(16px);
+
+  animation: kayitOverlayGiris 0.25s ease;
+}
+
+@keyframes kayitOverlayGiris {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================
+   2. ANA KAYIT PANELİ
+========================================================== */
+
+.kayit-panel {
+  position: relative;
+
+  width: min(100%, 760px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 30px;
+  background:
+    radial-gradient(
+      circle at 90% 5%,
+      rgba(138, 168, 255, 0.13),
+      transparent 30%
+    ),
+    linear-gradient(145deg, #10243a, #091827);
+
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.5);
+
+  animation: kayitPanelGiris 0.35s ease;
+}
+
+@keyframes kayitPanelGiris {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.kayit-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.kayit-panel::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ==========================================================
+   3. KAPATMA BUTONU
+========================================================== */
+
+.kayit-panel__kapat {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  width: 40px;
+  height: 40px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.05);
+
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 25px;
+  line-height: 1;
+
+  transition: 0.25s ease;
+}
+
+.kayit-panel__kapat:hover {
+  border-color: rgba(97, 230, 197, 0.4);
+  background: rgba(97, 230, 197, 0.1);
+  transform: rotate(5deg);
+}
+
+/* ==========================================================
+   4. PANELİN ÜST BÖLÜMÜ
+========================================================== */
+
+.kayit-panel__ust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+
+  padding: 25px 75px 25px 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.kayit-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.kayit-brand > span {
+  display: grid;
+  place-items: center;
+
+  width: 35px;
+  height: 35px;
+  border-radius: 11px;
+
+  background: linear-gradient(135deg, #61e6c5, #8aa8ff);
+  color: #06111d;
+  font-weight: 900;
+}
+
+.kayit-adim-bilgisi {
+  width: min(220px, 45%);
+}
+
+.kayit-adim-bilgisi > span {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #a9b8ca;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.kayit-ilerleme {
+  height: 6px;
+  overflow: hidden;
+
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.kayit-ilerleme > span {
+  display: block;
+  height: 100%;
+
+  border-radius: inherit;
+  background: linear-gradient(90deg, #61e6c5, #8aa8ff);
+
+  transition: width 0.35s ease;
+}
+
+/* ==========================================================
+   5. FORM VE ADIMLAR
+========================================================== */
+
+.kayit-formu {
+  padding: 42px;
+}
+
+.kayit-adimi {
+  animation: kayitAdimGiris 0.3s ease;
+}
+
+@keyframes kayitAdimGiris {
+  from {
+    opacity: 0;
+    transform: translateX(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.kayit-etiketi {
+  color: #61e6c5;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.kayit-adimi h2 {
+  max-width: 590px;
+  margin: 12px 0;
+
+  color: #ffffff;
+  font-size: clamp(30px, 5vw, 43px);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.kayit-adimi > p {
+  max-width: 590px;
+  margin: 0 0 30px;
+
+  color: #a9b8ca;
+  line-height: 1.7;
+}
+
+/* ==========================================================
+   6. INPUT VE SELECT ALANLARI
+========================================================== */
+
+.form-alani {
+  display: block;
+  margin-top: 20px;
+}
+
+.form-alani > span {
+  display: block;
+  margin-bottom: 9px;
+
+  color: #d6dfeb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-alani input,
+.form-alani select {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 14px;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.045);
+  color: #ffffff;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.form-alani input::placeholder {
+  color: #708095;
+}
+
+.form-alani input:focus,
+.form-alani select:focus {
+  border-color: rgba(97, 230, 197, 0.55);
+  background: rgba(255, 255, 255, 0.065);
+  box-shadow: 0 0 0 4px rgba(97, 230, 197, 0.08);
+}
+
+.form-alani input:disabled,
+.form-alani select:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.form-alani select {
+  cursor: pointer;
+}
+
+.form-alani select option {
+  background: #10243a;
+  color: #ffffff;
+}
+
+/* ==========================================================
+   7. BİLGİ ALANI SEÇİMİ
+========================================================== */
+
+.alan-secim-bilgisi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+  padding: 13px 15px;
+
+  border: 1px solid rgba(97, 230, 197, 0.16);
+  border-radius: 13px;
+  background: rgba(97, 230, 197, 0.055);
+
+  color: #a9b8ca;
+  font-size: 12px;
+}
+
+.alan-secim-bilgisi strong {
+  color: #61e6c5;
+}
+
+.bilgi-alanlari {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.bilgi-alani {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  min-height: 48px;
+  padding: 10px 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.035);
+
+  color: #c8d3df;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+
+  transition: 0.25s ease;
+}
+
+.bilgi-alani > span {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+
+  width: 23px;
+  height: 23px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.07);
+
+  color: #a9b8ca;
+}
+
+.bilgi-alani:hover {
+  border-color: rgba(97, 230, 197, 0.3);
+  transform: translateY(-2px);
+}
+
+.bilgi-alani--secili {
+  border-color: rgba(97, 230, 197, 0.5);
+  background: rgba(97, 230, 197, 0.11);
+  color: #ffffff;
+}
+
+.bilgi-alani--secili > span {
+  background: #61e6c5;
+  color: #07111f;
+}
+
+.kayit-hukuki {
+  display: grid;
+  gap: 11px;
+  margin-top: 24px;
+  padding: 17px;
+  border: 1px solid rgba(97, 230, 197, 0.18);
+  border-radius: 15px;
+  background: rgba(97, 230, 197, 0.045);
+}
+
+.kayit-hukuki__ust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 2px;
+}
+
+.kayit-hukuki__ust strong {
+  color: #eef7ff;
+  font-size: 13px;
+}
+
+.kayit-hukuki__ust button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #61e6c5;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.kayit-hukuki label {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: #aebdcb;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.kayit-hukuki input {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  accent-color: #61e6c5;
+}
+
+/* ==========================================================
+   8. HATA MESAJI
+========================================================== */
+
+.kayit-hatasi {
+  margin: 20px 0 0;
+  padding: 13px 15px;
+
+  border: 1px solid rgba(255, 120, 120, 0.25);
+  border-radius: 12px;
+  background: rgba(255, 100, 100, 0.08);
+
+  color: #ffaaaa;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ==========================================================
+   9. ALT BUTONLAR
+========================================================== */
+
+.kayit-formu__butonlar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  margin-top: 34px;
+  padding-top: 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================
+   10. TELEFON GÖRÜNÜMÜ
+========================================================== */
+
+@media (max-width: 650px) {
+  .kayit-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .kayit-panel {
+    width: 100%;
+    max-height: 94vh;
+
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 25px 25px 0 0;
+  }
+
+  .kayit-panel__ust {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+    padding: 22px 65px 22px 20px;
+  }
+
+  .kayit-adim-bilgisi {
+    width: 100%;
+  }
+
+  .kayit-adim-bilgisi > span {
+    text-align: left;
+  }
+
+  .kayit-formu {
+    padding: 30px 20px;
+  }
+
+  .bilgi-alanlari {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .kayit-formu__butonlar {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .kayit-formu__butonlar .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .bilgi-alanlari {
+    grid-template-columns: 1fr;
+  }
+}

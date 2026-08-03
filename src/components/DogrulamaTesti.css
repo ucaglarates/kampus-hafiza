@@ -1,0 +1,405 @@
+/* ==========================================================
+   1. TEST PENCERESİNİN SAYFA ÜZERİNDEKİ KATMANI
+========================================================== */
+
+.test-overlay {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 28px;
+
+  background: rgba(2, 9, 16, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ==========================================================
+   2. TESTİN ANA KARTI
+========================================================== */
+
+.test-panel {
+  position: relative;
+  width: min(100%, 760px);
+  overflow: hidden;
+
+  border: 1px solid rgba(97, 230, 197, 0.2);
+  border-radius: 28px;
+  background:
+    radial-gradient(
+      circle at 92% 6%,
+      rgba(138, 168, 255, 0.16),
+      transparent 32%
+    ),
+    linear-gradient(150deg, #10243a 0%, #081726 100%);
+  box-shadow:
+    0 35px 100px rgba(0, 0, 0, 0.48),
+    inset 0 1px rgba(255, 255, 255, 0.06);
+
+  color: #eef3f8;
+}
+
+.test-panel__ust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 25px 28px 19px;
+}
+
+.test-panel__ust > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.test-panel__ust strong {
+  font-size: 15px;
+}
+
+.test-etiketi {
+  color: #61e6c5;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+/* ==========================================================
+   3. SÜRE SAYACI VE İLERLEME ÇUBUĞU
+========================================================== */
+
+.test-sayaci {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 76px;
+  padding: 11px 14px;
+
+  border: 1px solid rgba(97, 230, 197, 0.23);
+  border-radius: 999px;
+  background: rgba(97, 230, 197, 0.08);
+
+  color: #b8f8e8;
+  font-size: 16px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.test-sayaci span {
+  font-size: 18px;
+}
+
+.test-sayaci--acil {
+  border-color: rgba(255, 114, 128, 0.4);
+  background: rgba(255, 93, 110, 0.12);
+  color: #ffadb6;
+  animation: test-sayaci-nabiz 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes test-sayaci-nabiz {
+  to {
+    box-shadow: 0 0 22px rgba(255, 93, 110, 0.18);
+    transform: scale(1.035);
+  }
+}
+
+.test-ilerleme {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.test-ilerleme span {
+  display: block;
+  height: 100%;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(90deg, #61e6c5, #8aa8ff);
+  box-shadow: 0 0 18px rgba(97, 230, 197, 0.38);
+  transition: width 280ms ease;
+}
+
+/* ==========================================================
+   4. SORU VE CEVAP SEÇENEKLERİ
+========================================================== */
+
+.test-soru-alani {
+  padding: 30px 28px 26px;
+}
+
+.test-soru-bilgisi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 17px;
+}
+
+.test-soru-bilgisi span,
+.test-soru-bilgisi strong {
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 10px;
+}
+
+.test-soru-bilgisi span {
+  background: rgba(138, 168, 255, 0.12);
+  color: #cdd8ff;
+  font-weight: 800;
+}
+
+.test-soru-bilgisi strong {
+  color: #8295aa;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.test-soru-alani h2 {
+  max-width: 650px;
+  margin: 0 0 25px;
+  color: #f5f8fb;
+  font-size: clamp(21px, 3.2vw, 29px);
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+
+.test-secenekleri {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.test-secenegi {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 62px;
+  padding: 12px 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.035);
+
+  color: #cbd5e1;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.test-secenegi > span {
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+
+  color: #8fa2b7;
+  font-size: 11px;
+}
+
+.test-secenegi:hover {
+  border-color: rgba(97, 230, 197, 0.33);
+  background: rgba(97, 230, 197, 0.07);
+  color: #f4fffc;
+  transform: translateY(-2px);
+}
+
+.test-secenegi--secili {
+  border-color: rgba(97, 230, 197, 0.65);
+  background: linear-gradient(
+    135deg,
+    rgba(97, 230, 197, 0.15),
+    rgba(138, 168, 255, 0.09)
+  );
+  color: #f4fffc;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.test-secenegi--secili > span {
+  border-color: transparent;
+  background: #61e6c5;
+  color: #06111d;
+}
+
+/* ==========================================================
+   5. TEST KARTININ ALT KISMI
+========================================================== */
+
+.test-panel__alt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 19px 28px 24px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(3, 12, 21, 0.28);
+}
+
+.test-panel__alt p {
+  margin: 0;
+  color: #7f91a6;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.test-panel__alt .button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================================================
+   6. TEST SONUÇ EKRANI
+========================================================== */
+
+.test-panel--sonuc {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 42px 34px;
+  text-align: center;
+}
+
+.test-sonuc-simgesi {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 22px;
+
+  border-radius: 23px;
+  background: linear-gradient(135deg, #61e6c5, #8aa8ff);
+  box-shadow: 0 18px 45px rgba(97, 230, 197, 0.25);
+
+  color: #06111d;
+  font-size: 32px;
+}
+
+.test-panel--sonuc h2 {
+  margin: 9px 0 14px;
+  font-size: clamp(27px, 5vw, 38px);
+  letter-spacing: -0.04em;
+}
+
+.test-seviye-rozeti {
+  padding: 10px 18px;
+  border: 1px solid rgba(97, 230, 197, 0.28);
+  border-radius: 999px;
+  background: rgba(97, 230, 197, 0.09);
+  color: #b8f8e8;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.test-sonuc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: min(100%, 460px);
+  margin: 28px 0 20px;
+}
+
+.test-sonuc-grid article {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 18px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.test-sonuc-grid strong {
+  color: #f4fffc;
+  font-size: 26px;
+}
+
+.test-sonuc-grid span {
+  color: #8799ad;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.test-panel--sonuc > p {
+  max-width: 500px;
+  margin: 0 0 25px;
+  color: #93a4b7;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.test-panel--sonuc > .test-kayit-hatasi {
+  width: min(100%, 500px);
+  margin-top: -12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 93, 110, 0.1);
+  color: #ffadb6;
+}
+
+/* ==========================================================
+   7. TELEFON GÖRÜNÜMÜ
+========================================================== */
+
+@media (max-width: 650px) {
+  .test-overlay {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .test-panel {
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    border-radius: 23px;
+  }
+
+  .test-panel__ust,
+  .test-soru-alani,
+  .test-panel__alt {
+    padding-right: 19px;
+    padding-left: 19px;
+  }
+
+  .test-secenekleri {
+    grid-template-columns: 1fr;
+  }
+
+  .test-panel__alt {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .test-panel__alt .button {
+    width: 100%;
+  }
+
+  .test-panel--sonuc {
+    padding: 32px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .test-sayaci--acil {
+    animation: none;
+  }
+
+  .test-secenegi,
+  .test-ilerleme span {
+    transition: none;
+  }
+}

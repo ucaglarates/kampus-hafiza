@@ -3,6 +3,10 @@
 KampüsHafıza, Manisa Celal Bayar Üniversitesi öğrencilerinin bilgi ve
 deneyimlerini paylaşabildiği bağımsız bir öğrenci topluluğu uygulamasıdır.
 
+## Canlı Site
+
+[KampüsHafıza'yı canlı görüntüle](https://kampus-hafiza.onrender.com/)
+
 ## Özellikler
 
 - `@ogr.cbu.edu.tr` öğrenci e-postasıyla kayıt ve e-posta doğrulama

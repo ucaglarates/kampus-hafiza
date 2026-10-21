@@ -1,1144 +1,347 @@
-/* ==========================================================
-   1. RENKLER VE GENEL DEĞİŞKENLER
-========================================================== */
-
+/* Semantic tokens inspired by shadcn/ui's neutral dark theme. */
 :root {
-  --background: #07111f;
-  --background-soft: #0b1828;
-  --card: rgba(14, 31, 49, 0.76);
-  --card-strong: #10243a;
-
-  --primary: #61e6c5;
-  --primary-dark: #20b895;
-  --secondary: #8aa8ff;
-
-  --text: #f7f9fc;
-  --text-soft: #a9b8ca;
-  --border: rgba(255, 255, 255, 0.1);
-
-  --shadow: 0 28px 80px rgba(0, 0, 0, 0.3);
-  --container: 1200px;
+  color-scheme: dark;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --border: #2e2e33;
+  --input: #3f3f46;
+  --ring: #71717a;
+  --destructive: #fda4af;
+  --success: #6ee7b7;
+  --radius: 8px;
+  --shadow: 0 16px 48px rgb(0 0 0 / 0.24);
+  /* Compatibility aliases for the authenticated screens. */
+  --text: var(--foreground);
+  --text-soft: var(--muted-foreground);
+  --background-soft: #111113;
+  --card-strong: var(--muted);
+  --primary-dark: #d4d4d8;
+  --container: 1120px;
 }
-
-/* ==========================================================
-   2. GENEL SAYFA AYARLARI
-========================================================== */
-
 * {
   box-sizing: border-box;
 }
-
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 90px;
 }
-
-section {
-  scroll-margin-top: 120px;
-}
-
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 10% 5%, rgba(97, 230, 197, 0.1), transparent 30%),
-    radial-gradient(circle at 90% 20%, rgba(138, 168, 255, 0.12), transparent 32%),
-    var(--background);
-  color: var(--text);
+  background: var(--background);
+  color: var(--foreground);
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
     sans-serif;
+  font-size: 14px;
 }
-
 button,
-a {
+input,
+textarea,
+select {
   font: inherit;
 }
-
 button {
   border: 0;
 }
-
 a {
   color: inherit;
   text-decoration: none;
 }
-
-#root {
-  width: 100%;
-  min-height: 100vh;
+button:not(:disabled),
+a {
+  -webkit-tap-highlight-color: transparent;
 }
-
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+::selection {
+  background: #3f3f46;
+  color: #fff;
+}
+#root,
 .site-shell {
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
 }
-
-/* ==========================================================
-   3. ÜST MENÜ
-========================================================== */
-
-.navbar {
-  position: fixed;
-  top: 16px;
-  left: 50%;
-  z-index: 100;
-
-  transform: translateX(-50%);
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-
-  width: min(calc(100% - 40px), var(--container));
-  margin: 0;
-  padding: 14px 18px;
-
+.ui-icon {
+  flex: 0 0 auto;
+}
+.ui-card {
+  background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  background: rgba(7, 17, 31, 0.76);
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(18px);
+  border-radius: 12px;
+  color: var(--card-foreground);
 }
-
-.brand {
+.ui-badge {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-}
-
-.brand__logo {
-  display: grid;
-  place-items: center;
-
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  box-shadow: 0 10px 30px rgba(97, 230, 197, 0.22);
-
-  color: #06111d;
-  font-size: 20px;
-  font-weight: 900;
-}
-
-.brand strong {
-  display: block;
-  font-size: 16px;
-  letter-spacing: -0.02em;
-}
-
-.brand small {
-  display: block;
-  margin-top: 2px;
-  color: var(--text-soft);
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 8px;
   font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #d4d4d8;
 }
-
-.navbar__links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-.navbar__links a {
-  position: relative;
-  color: var(--text-soft);
-  font-size: 14px;
-  font-weight: 600;
-  transition: 0.25s ease;
-}
-
-.navbar__links a::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -8px;
-  left: 0;
-
-  height: 2px;
-  border-radius: 99px;
-  background: var(--primary);
-
-  transform: scaleX(0);
-  transition: 0.25s ease;
-}
-
-.navbar__links a:hover {
-  color: var(--text);
-}
-
-.navbar__links a:hover::after {
-  transform: scaleX(1);
-}
-
-.navbar__actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.kullanici-karti {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  max-width: 230px;
-  padding: 6px 11px 6px 7px;
-  border: 1px solid rgba(97, 230, 197, 0.2);
-  border-radius: 14px;
-  background: rgba(97, 230, 197, 0.065);
-}
-
-.kullanici-karti > span {
-  display: grid;
-  flex-shrink: 0;
-  place-items: center;
-
-  width: 33px;
-  height: 33px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-
-  color: #06111d;
-  font-weight: 900;
-}
-
-.kullanici-karti strong,
-.kullanici-karti small {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.kullanici-karti strong {
-  font-size: 12px;
-}
-
-.kullanici-karti small {
-  max-width: 150px;
-  margin-top: 2px;
-  color: var(--text-soft);
-  font-size: 9px;
-}
-
-.kullanici-karti:has(small:not(:empty)) {
-  transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-/* ==========================================================
-   4. BUTONLAR
-========================================================== */
-
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  min-height: 44px;
-  padding: 0 18px;
-
-  border: 1px solid transparent;
-  border-radius: 13px;
-
-  cursor: pointer;
-  font-weight: 700;
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease;
-}
-
-.button:hover {
-  transform: translateY(-2px);
-}
-
-.button:disabled {
-  cursor: wait;
-  opacity: 0.58;
-  transform: none;
-}
-
-.button:focus-visible,
-.topic-card__footer button:focus-visible,
-a:focus-visible {
-  outline: 3px solid rgba(97, 230, 197, 0.45);
-  outline-offset: 4px;
-}
-
-.button--primary {
-  background: linear-gradient(135deg, var(--primary), #79a7ff);
-  box-shadow: 0 14px 35px rgba(97, 230, 197, 0.17);
-  color: #06111d;
-}
-
-.button--primary:hover {
-  box-shadow: 0 18px 42px rgba(97, 230, 197, 0.3);
-}
-
-.button--ghost {
-  border-color: var(--border);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text);
-}
-
-.button--secondary {
-  border-color: var(--border);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
-}
-
-.button--light {
-  background: #ffffff;
-  color: #0b1b2c;
-}
-
-.button--large {
-  min-height: 54px;
-  padding: 0 24px;
-  border-radius: 16px;
-}
-
-/* ==========================================================
-   5. KARŞILAMA ALANI
-========================================================== */
-
-.hero {
-  position: relative;
-
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  align-items: center;
-  gap: 70px;
-
-  width: min(calc(100% - 48px), var(--container));
-  min-height: 720px;
-  margin: 0 auto;
-  padding: 150px 0 80px;
-}
-
-.hero__content {
-  position: relative;
-  z-index: 2;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-
-  margin-bottom: 24px;
-  padding: 9px 14px;
-
-  border: 1px solid rgba(97, 230, 197, 0.2);
-  border-radius: 999px;
-  background: rgba(97, 230, 197, 0.06);
-
-  color: #a5f3df;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.eyebrow__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--primary);
-  box-shadow: 0 0 16px var(--primary);
-}
-
-.hero h1 {
-  max-width: 760px;
-  margin: 0;
-
-  font-size: clamp(48px, 6vw, 78px);
-  line-height: 1.02;
-  letter-spacing: -0.055em;
-}
-
-.hero__highlight {
-  background: linear-gradient(100deg, var(--primary), var(--secondary));
-  background-clip: text;
-  color: transparent;
-}
-
-.hero__description {
-  max-width: 650px;
-  margin: 28px 0 0;
-
-  color: var(--text-soft);
-  font-size: 18px;
-  line-height: 1.8;
-}
-
-.hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 36px;
-}
-
-.hero__trust {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 38px;
-}
-
-.hero__trust p {
-  max-width: 310px;
-  margin: 0;
-  color: var(--text-soft);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.avatar-group {
-  display: flex;
-}
-
-.avatar-group span {
-  display: grid;
-  place-items: center;
-
-  width: 34px;
-  height: 34px;
-  margin-left: -8px;
-
-  border: 3px solid var(--background);
-  border-radius: 50%;
-  background: linear-gradient(135deg, #223e5e, #31557c);
-
-  color: white;
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.avatar-group span:first-child {
-  margin-left: 0;
-}
-
-.avatar-group span:last-child {
-  background: var(--primary);
-  color: #07111f;
-}
-
-/* ==========================================================
-   6. HERO BİLGİ KARTLARI
-========================================================== */
-
-.hero__visual {
-  position: relative;
-  min-height: 510px;
-}
-
-.visual-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-
-  width: 370px;
-  height: 370px;
-  border-radius: 50%;
-
-  background: rgba(97, 230, 197, 0.2);
-  filter: blur(100px);
-  transform: translate(-50%, -50%);
-}
-
-.knowledge-card {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  left: 50%;
-
-  width: min(100%, 450px);
-  padding: 30px;
-
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 28px;
-  background:
-    linear-gradient(145deg, rgba(19, 42, 63, 0.94), rgba(11, 27, 43, 0.9));
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
-
-  transform: translate(-50%, -50%) rotate(2deg);
-}
-
-.knowledge-card__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.knowledge-card__category {
-  color: var(--secondary);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.verified-badge {
-  padding: 7px 10px;
-  border: 1px solid rgba(97, 230, 197, 0.2);
-  border-radius: 999px;
-  background: rgba(97, 230, 197, 0.08);
-
-  color: var(--primary);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.knowledge-card h2 {
-  margin: 34px 0 14px;
-  font-size: 30px;
-  line-height: 1.15;
-  letter-spacing: -0.035em;
-}
-
-.knowledge-card > p {
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.7;
-}
-
-.knowledge-card__tags {
-  display: flex;
-  flex-wrap: wrap;
   gap: 9px;
-  margin-top: 24px;
-}
-
-.knowledge-card__tags span {
-  padding: 8px 11px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.055);
-  color: #cbd6e2;
-  font-size: 12px;
-}
-
-.ai-summary {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-
-  margin-top: 28px;
-  padding: 15px;
-
-  border: 1px solid rgba(138, 168, 255, 0.18);
-  border-radius: 16px;
-  background: rgba(138, 168, 255, 0.08);
-}
-
-.ai-summary__icon {
-  display: grid;
-  place-items: center;
-
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--secondary), var(--primary));
-
-  color: #07111f;
-  font-size: 18px;
-}
-
-.ai-summary strong,
-.ai-summary small {
-  display: block;
-}
-
-.ai-summary strong {
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
   font-size: 13px;
-}
-
-.ai-summary small {
-  margin-top: 4px;
-  color: var(--text-soft);
-  font-size: 11px;
-}
-
-.floating-card {
-  position: absolute;
-  z-index: 3;
-
-  padding: 15px 18px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: rgba(15, 34, 52, 0.9);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
-  backdrop-filter: blur(15px);
-
-  animation: float 4s ease-in-out infinite;
-}
-
-.floating-card span,
-.floating-card strong {
-  display: block;
-}
-
-.floating-card span {
-  margin-bottom: 6px;
-  color: var(--text-soft);
-  font-size: 11px;
-}
-
-.floating-card strong {
-  font-size: 14px;
-}
-
-.floating-card--top {
-  top: 70px;
-  right: 0;
-}
-
-.floating-card--bottom {
-  bottom: 60px;
-  left: -15px;
-  animation-delay: 1.2s;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-/* ==========================================================
-   7. İSTATİSTİKLER
-========================================================== */
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto;
-  padding: 28px;
-
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.025);
-}
-
-.stats div {
-  padding: 10px 24px;
-  border-right: 1px solid var(--border);
-}
-
-.stats div:last-child {
-  border-right: 0;
-}
-
-.stats strong,
-.stats span {
-  display: block;
-  text-align: center;
-}
-
-.stats strong {
-  color: var(--primary);
-  font-size: 27px;
-}
-
-.stats span {
-  margin-top: 7px;
-  color: var(--text-soft);
-  font-size: 12px;
-}
-
-/* ==========================================================
-   8. ORTAK BÖLÜM TASARIMI
-========================================================== */
-
-.section {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto;
-  padding: 120px 0 20px;
-}
-
-.section__heading {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 50px;
-  margin-bottom: 48px;
-}
-
-.section__label {
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.15em;
-}
-
-.section__heading h2 {
-  max-width: 620px;
-  margin: 12px 0 0;
-
-  font-size: clamp(34px, 4vw, 50px);
-  line-height: 1.08;
-  letter-spacing: -0.045em;
-}
-
-.section__heading > p {
-  max-width: 470px;
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.75;
-}
-
-/* ==========================================================
-   9. BİLGİ ALANI KARTLARI
-========================================================== */
-
-.topic-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.topic-card {
-  padding: 28px;
-
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  background: var(--card);
-
+  line-height: 1.4;
+  font-weight: 500;
+  cursor: pointer;
   transition:
-    transform 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
+    background 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
-
-.topic-card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(97, 230, 197, 0.35);
-  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.2);
+.button svg {
+  width: 16px;
+  height: 16px;
 }
-
-.topic-card__icon {
-  display: grid;
-  place-items: center;
-
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    rgba(97, 230, 197, 0.16),
-    rgba(138, 168, 255, 0.16)
-  );
-
-  color: var(--primary);
-  font-size: 23px;
-  font-weight: 800;
-}
-
-.topic-card h3 {
-  margin: 26px 0 12px;
-  font-size: 22px;
-}
-
-.topic-card > p {
-  min-height: 76px;
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.65;
-}
-
-.topic-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 22px;
-}
-
-.topic-card__tags span {
-  padding: 7px 10px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #cbd6e2;
-  font-size: 11px;
-}
-
-.topic-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  margin-top: 26px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
-}
-
-.topic-card__footer > span {
-  color: var(--text-soft);
-  font-size: 12px;
-}
-
-.topic-card__footer button {
-  display: grid;
-  place-items: center;
-
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
+.button--primary,
+.button--light {
   background: var(--primary);
-
-  color: #07111f;
-  cursor: pointer;
-  font-size: 20px;
-  transition: 0.25s ease;
+  color: var(--primary-foreground);
+  box-shadow: 0 1px 2px #0002;
 }
-
-.topic-card__footer button:hover {
-  transform: translateX(4px);
+.button--primary:hover,
+.button--light:hover {
+  background: #d4d4d8;
 }
-
-/* ==========================================================
-   10. NASIL ÇALIŞIR?
-========================================================== */
-
-.process {
-  padding-bottom: 110px;
-}
-
-.process-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.process-grid article {
-  position: relative;
-  padding: 30px;
-  border-top: 1px solid rgba(97, 230, 197, 0.4);
-  background: linear-gradient(
-    180deg,
-    rgba(97, 230, 197, 0.055),
-    transparent
-  );
-}
-
-.process__number {
-  color: var(--primary);
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-}
-
-.process-grid h3 {
-  margin: 42px 0 12px;
-  font-size: 21px;
-}
-
-.process-grid p {
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.7;
-}
-
-/* ==========================================================
-   11. TOPLULUK ÇAĞRI ALANI
-========================================================== */
-
-.community-cta {
-  width: min(calc(100% - 48px), var(--container));
-  margin: 30px auto 110px;
-  padding: 80px 30px;
-
-  border: 1px solid rgba(97, 230, 197, 0.28);
-  border-radius: 32px;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(97, 230, 197, 0.2), transparent 35%),
-    linear-gradient(135deg, #153653, #152b45);
-
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.community-cta h2 {
-  max-width: 780px;
-  margin: 18px auto;
-
-  font-size: clamp(36px, 5vw, 58px);
-  line-height: 1.08;
-  letter-spacing: -0.045em;
-}
-
-.community-cta p {
-  max-width: 650px;
-  margin: 0 auto 30px;
-  color: #c2cedb;
-  font-size: 17px;
-  line-height: 1.7;
-}
-
-/* ==========================================================
-   12. SAYFA ALTI
-========================================================== */
-
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-
-  width: min(calc(100% - 48px), var(--container));
-  margin: 0 auto;
-  padding: 30px 0 42px;
-  border-top: 1px solid var(--border);
-
-  color: var(--text-soft);
-  font-size: 12px;
-}
-
-.footer .brand {
-  color: var(--text);
-}
-
-.footer .brand__logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  font-size: 16px;
-}
-
-.footer__hukuk {
-  display: grid;
-  justify-items: end;
-  gap: 5px;
-  max-width: 420px;
-  text-align: right;
-}
-
-.footer__hukuk button {
-  padding: 0;
-  border: 0;
+.button--outline,
+.button--secondary {
+  border-color: var(--input);
   background: transparent;
-  color: var(--primary);
-  cursor: pointer;
-  font: inherit;
-  font-weight: 800;
+  color: var(--foreground);
 }
-
-.footer__hukuk small {
-  color: #718398;
-  line-height: 1.45;
+.button--outline:hover,
+.button--secondary:hover,
+.button--ghost:hover {
+  background: var(--muted);
 }
-
-/* ==========================================================
-   13. TABLET GÖRÜNÜMÜ
-========================================================== */
-
-@media (max-width: 1000px) {
-  .navbar__links {
-    display: none;
-  }
-
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding-top: 100px;
-  }
-
-  .hero__content {
-    text-align: center;
-  }
-
-  .hero__description {
-    margin-right: auto;
-    margin-left: auto;
-  }
-
-  .hero__actions,
-  .hero__trust {
-    justify-content: center;
-  }
-
-  .hero__visual {
-    min-height: 500px;
-  }
-
-  .topic-grid,
-  .process-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .topic-card > p {
-    min-height: auto;
-  }
+.button--ghost {
+  background: transparent;
+  color: var(--foreground);
 }
-
-/* ==========================================================
-   14. TELEFON GÖRÜNÜMÜ
-========================================================== */
-
-@media (max-width: 700px) {
-  .navbar {
-  top: 10px;
-  width: calc(100% - 24px);
-  margin: 0;
-  padding: 11px 12px;
-  }
-
-  .brand small,
-  .navbar__actions .button--ghost {
-    display: none;
-  }
-
-  .kullanici-karti {
-    max-width: 150px;
-  }
-
-  .kullanici-karti small,
-  .cikis-butonu {
-    display: none;
-  }
-
-  .navbar__actions .button--primary {
-    min-height: 40px;
-    padding: 0 13px;
-    font-size: 12px;
-  }
-
-  .hero {
-    width: calc(100% - 32px);
-    min-height: auto;
-    padding: 90px 0 45px;
-  }
-
-  .hero h1 {
-    font-size: clamp(42px, 13vw, 58px);
-  }
-
-  .hero__description {
-    font-size: 16px;
-  }
-
-  .hero__actions {
-    flex-direction: column;
-  }
-
-  .hero__actions .button {
-    width: 100%;
-  }
-
-  .hero__trust {
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .hero__visual {
-    min-height: 450px;
-  }
-
-  .knowledge-card {
-    padding: 22px;
-    transform: translate(-50%, -50%);
-  }
-
-  .knowledge-card__top {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .knowledge-card h2 {
-    margin-top: 24px;
-    font-size: 25px;
-  }
-
-  .floating-card--top {
-    top: 20px;
-    right: -5px;
-  }
-
-  .floating-card--bottom {
-    bottom: 25px;
-    left: -5px;
-  }
-
-  .stats {
-    grid-template-columns: repeat(2, 1fr);
-    width: calc(100% - 32px);
-    padding: 18px;
-  }
-
-  .stats div {
-    padding: 18px 8px;
-    border-right: 0;
-  }
-
-  .section {
-    width: calc(100% - 32px);
-    padding-top: 90px;
-  }
-
-  .section__heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .section__heading h2 {
-    font-size: 36px;
-  }
-
-  .community-cta {
-    width: calc(100% - 32px);
-    margin-bottom: 70px;
-    padding: 60px 20px;
-  }
-
-  .footer {
-    align-items: flex-start;
-    flex-direction: column;
-    width: calc(100% - 32px);
-  }
-
-  .footer__hukuk {
-    justify-items: start;
-    text-align: left;
-  }
+.button--large {
+  min-height: 44px;
+  padding-inline: 20px;
 }
-
-/* ==========================================================
-   15. HAREKETİ AZALTMA TERCİHİ
-========================================================== */
-
+.ui-input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: transparent;
+  padding: 10px 12px;
+  color: var(--foreground);
+  box-shadow: 0 1px 2px #0002;
+}
+.ui-input::placeholder {
+  color: var(--muted-foreground);
+}
+.skip-link {
+  position: fixed;
+  top: -80px;
+  left: 16px;
+  z-index: 6000;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 12px 20px;
+  border-radius: 6px;
+}
+.skip-link:focus {
+  top: 12px;
+}
+.uygulama-yukleniyor {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: var(--muted-foreground);
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
-/* Oturumdan sonra profil verisi okunurken görünen kısa bekleme ekranı */
-.uygulama-yukleniyor {
-  display: grid;
-  min-height: 100vh;
-  place-items: center;
-  background: #07111d;
-  color: #a9b8ca;
+
+/* Consistent dialog surfaces and compact form controls across all flows. */
+.giris-panel,
+.kayit-panel,
+.test-panel,
+.ilgi-paneli,
+.yetki-paneli,
+.hukuki-panel,
+.rapor-paneli {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  max-height: calc(100dvh - 40px);
+}
+.giris-panel {
+  overflow-y: auto;
+}
+.giris-formu {
+  padding: 28px;
+}
+.giris-formu h2 {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.giris-formu > p:not(.giris-hatasi) {
+  font-size: 13px;
+}
+.giris-etiketi {
+  font-weight: 500;
+  color: var(--muted-foreground);
+  letter-spacing: 0.1em;
+}
+.giris-form-alani input,
+.kayit-formu input:not([type="checkbox"]),
+.kayit-formu select {
+  min-height: 42px;
+  border-radius: var(--radius);
+  border-color: var(--input);
+  background: var(--background);
+  color: var(--foreground);
   font-size: 14px;
+}
+.giris-form-alani input:focus,
+.kayit-formu input:focus,
+.kayit-formu select:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px rgb(113 113 122 / 0.18);
+}
+.giris-buton {
+  min-height: 42px;
+}
+.giris-panel__kapat,
+.kayit-panel__kapat {
+  width: 32px;
+  height: 32px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+.giris-panel__kapat:hover,
+.kayit-panel__kapat:hover {
+  background: var(--muted);
+  transform: none;
+}
+.kayit-formu h2 {
+  font-size: 28px;
+  font-weight: 600;
+}
+:is(
+    .giris-panel,
+    .kayit-panel,
+    .test-panel,
+    .ilgi-paneli,
+    .yetki-paneli,
+    .hukuki-panel,
+    .rapor-paneli
+  )
+  :is(input, select, textarea):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.kampus-uygulamasi {
+  --akis-zemin: var(--background);
+  --akis-kart: var(--card);
+  --akis-cizgi: var(--border);
+  --akis-yazi: var(--foreground);
+  --akis-soluk: var(--muted-foreground);
+  --akis-vurgu: var(--primary);
+  --akis-mavi: var(--primary);
+}
+.sol-menu {
+  gap: 20px;
+}
+.sol-menu nav button {
+  font-weight: 500;
+  border-radius: 8px;
+}
+.sol-menu nav button.aktif {
+  background: var(--muted);
+  color: var(--foreground);
+}
+.sol-menu__paylas,
+.gonderi-olusturucu__alt button,
+.topluluk-formu button,
+.bolum-basligi > button {
+  border-radius: 8px;
+  background: var(--primary);
+  color: var(--primary-foreground) !important;
+  font-weight: 500;
+  box-shadow: none;
+}
+.akis-basligi {
+  background: rgb(9 9 11 / 0.94);
+}
+.akis-gonderisi {
+  transition: background 0.15s;
+}
+.akis-gonderisi:hover {
+  background: rgb(255 255 255 / 0.018);
+}
+.kampus-uygulamasi :is(input, select, textarea):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+@media (max-width: 560px) {
+  .giris-overlay {
+    padding: 12px;
+    align-items: center;
+  }
+  .giris-panel {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .giris-formu {
+    padding: 24px;
+  }
+  .giris-form-alani input,
+  .kayit-formu input:not([type="checkbox"]),
+  .kayit-formu select {
+    font-size: 16px;
+  }
 }

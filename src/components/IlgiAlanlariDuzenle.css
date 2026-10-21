@@ -10,22 +10,20 @@
   place-items: center;
   overflow-y: auto;
   padding: 28px;
-  background: rgba(2, 9, 16, 0.84);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(24, 24, 27, 0.84);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .ilgi-paneli {
   width: min(100%, 760px);
   max-height: calc(100vh - 56px);
   overflow-y: auto;
-  border: 1px solid rgba(97, 230, 197, 0.22);
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 92% 5%, rgba(138, 168, 255, 0.15), transparent 30%),
-    linear-gradient(150deg, #10243a, #081623);
-  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.5);
-  color: #edf3f8;
+  border: 1px solid rgba(250, 250, 250, 0.22);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: 0 2px 8px rgb(0 0 0 / .12);
+  color: var(--foreground);
 }
 
 .ilgi-paneli__ust {
@@ -38,9 +36,9 @@
 }
 
 .ilgi-paneli__ust span {
-  color: #61e6c5;
-  font-size: 10px;
-  font-weight: 900;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.16em;
 }
 
@@ -53,7 +51,7 @@
 .ilgi-paneli__ust p,
 .ilgi-paneli__alt p {
   margin: 0;
-  color: #91a2b5;
+  color: var(--muted-foreground);
   font-size: 11px;
 }
 
@@ -64,9 +62,9 @@
   width: 39px;
   height: 39px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
-  color: #dce5ee;
+  color: var(--foreground);
   font-size: 24px;
   cursor: pointer;
 }
@@ -80,13 +78,13 @@
 }
 
 .ilgi-secim-bilgisi strong {
-  color: #b8f8e8;
+  color: #d4d4d8;
   font-size: 12px;
 }
 
 .ilgi-secim-bilgisi span {
-  color: #8193a7;
-  font-size: 9px;
+  color: var(--muted-foreground);
+  font-size: 11px;
   text-align: right;
 }
 
@@ -108,12 +106,12 @@
   min-height: 48px;
   padding: 9px 11px;
   border: 1px solid rgba(255, 255, 255, 0.085);
-  border-radius: 13px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.035);
-  color: #b6c2d0;
+  color: #d4d4d8;
   font: inherit;
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 600;
   text-align: left;
   cursor: pointer;
 }
@@ -126,18 +124,18 @@
   height: 27px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
-  color: #8496aa;
+  color: var(--muted-foreground);
 }
 
 .ilgi-alani--secili {
-  border-color: rgba(97, 230, 197, 0.5);
-  background: rgba(97, 230, 197, 0.1);
-  color: #edfffa;
+  border-color: rgba(250, 250, 250, 0.5);
+  background: rgba(250, 250, 250, 0.1);
+  color: var(--foreground);
 }
 
 .ilgi-alani--secili > span {
-  background: #61e6c5;
-  color: #06111d;
+  background: var(--primary);
+  color: var(--background);
 }
 
 .ilgi-hatasi {
@@ -146,7 +144,7 @@
   border-radius: 10px;
   background: rgba(255, 93, 110, 0.1);
   color: #ffadb6;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .ilgi-paneli__alt {
@@ -156,7 +154,7 @@
   gap: 20px;
   padding: 19px 28px 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(3, 12, 21, 0.25);
+  background: rgba(24, 24, 27, 0.25);
 }
 
 /* ==========================================================
@@ -171,7 +169,7 @@
 
   .ilgi-paneli {
     max-height: calc(100vh - 24px);
-    border-radius: 23px;
+    border-radius: 12px;
   }
 
   .ilgi-paneli__ust,

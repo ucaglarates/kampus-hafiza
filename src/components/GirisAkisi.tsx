@@ -3,6 +3,7 @@
 // ============================================================
 import { useEffect, useState, type FormEvent } from "react";
 
+import { Button, Input } from "./ui/primitives";
 import { supabase } from "../lib/supabase";
 import "./GirisAkisi.css";
 
@@ -113,10 +114,7 @@ function GirisAkisi({ acik, kapat }: GirisAkisiProps) {
       className="giris-overlay"
       role="presentation"
       onMouseDown={(olay) => {
-        if (
-          olay.target === olay.currentTarget &&
-          !girisYapiliyor
-        ) {
+        if (olay.target === olay.currentTarget && !girisYapiliyor) {
           kapat();
         }
       }}
@@ -152,14 +150,14 @@ function GirisAkisi({ acik, kapat }: GirisAkisiProps) {
           <h2 id="giris-basligi">Kampüs hesabına giriş yap.</h2>
 
           <p>
-            Doğruladığın MCBÜ öğrenci e-postan ve şifrenle kaldığın
-            yerden devam et.
+            Doğruladığın MCBÜ öğrenci e-postan ve şifrenle kaldığın yerden devam
+            et.
           </p>
 
           <label className="giris-form-alani">
             <span>MCBÜ öğrenci e-postası</span>
 
-            <input
+            <Input
               type="email"
               value={eposta}
               placeholder="ogrencino@ogr.cbu.edu.tr"
@@ -172,7 +170,7 @@ function GirisAkisi({ acik, kapat }: GirisAkisiProps) {
           <label className="giris-form-alani">
             <span>Şifre</span>
 
-            <input
+            <Input
               type="password"
               value={sifre}
               placeholder="Şifreni yaz"
@@ -188,13 +186,13 @@ function GirisAkisi({ acik, kapat }: GirisAkisiProps) {
             </p>
           )}
 
-          <button
-            className="button button--primary giris-buton"
+          <Button
+            className="giris-buton"
             type="submit"
             disabled={girisYapiliyor}
           >
             {girisYapiliyor ? "Giriş yapılıyor..." : "Giriş yap"}
-          </button>
+          </Button>
         </form>
       </section>
     </div>

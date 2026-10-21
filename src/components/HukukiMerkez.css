@@ -5,8 +5,8 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(2, 8, 15, 0.86);
-  backdrop-filter: blur(16px);
+  background: rgba(24, 24, 27, 0.86);
+  backdrop-filter: blur(6px);
 }
 
 .hukuki-panel {
@@ -15,11 +15,11 @@
   width: min(980px, 100%);
   max-height: min(900px, calc(100vh - 48px));
   overflow: hidden;
-  border: 1px solid rgba(124, 225, 202, 0.22);
-  border-radius: 26px;
-  background: #0a1725;
-  color: #edf7ff;
-  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(250, 250, 250, 0.22);
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 2px 8px rgb(0 0 0 / .12);
 }
 
 .hukuki-panel__ust {
@@ -44,7 +44,7 @@
 
 .hukuki-panel__ust small {
   margin-top: 3px;
-  color: #8da0b4;
+  color: var(--muted-foreground);
   font-size: 11px;
 }
 
@@ -64,18 +64,18 @@
   place-items: center;
   width: 42px;
   height: 42px;
-  border-radius: 13px;
-  background: linear-gradient(135deg, #61e6c5, #86a7ff);
-  color: #07111d;
+  border-radius: 8px;
+  background: var(--primary);
+  color: var(--background);
   font-size: 22px;
-  font-weight: 950;
+  font-weight: 600;
 }
 
 .hukuki-zorunlu-bilgi {
   padding: 12px 24px;
-  border-bottom: 1px solid rgba(97, 230, 197, 0.14);
-  background: rgba(97, 230, 197, 0.07);
-  color: #bbf9ea;
+  border-bottom: 1px solid rgba(250, 250, 250, 0.14);
+  background: rgba(250, 250, 250, 0.07);
+  color: var(--foreground);
   font-size: 12px;
   font-weight: 700;
 }
@@ -99,20 +99,20 @@
 .hukuki-sekmeler button {
   padding: 12px 14px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 8px;
   background: transparent;
-  color: #9fb0c2;
+  color: var(--muted-foreground);
   cursor: pointer;
   font: inherit;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 600;
   text-align: left;
 }
 
 .hukuki-sekmeler button:hover,
 .hukuki-sekmeler button.aktif {
-  background: rgba(97, 230, 197, 0.1);
-  color: #69e7c7;
+  background: rgba(250, 250, 250, 0.1);
+  color: var(--muted-foreground);
 }
 
 .hukuki-metin {
@@ -127,20 +127,20 @@
 
 .hukuki-metin h3 {
   margin: 26px 0 8px;
-  color: #f2f8ff;
+  color: var(--foreground);
   font-size: 15px;
 }
 
 .hukuki-metin p,
 .hukuki-metin li {
-  color: #aebdcb;
+  color: #d4d4d8;
   font-size: 13px;
   line-height: 1.75;
 }
 
 .hukuki-metin a {
   margin: 0 4px;
-  color: #69e7c7;
+  color: var(--muted-foreground);
 }
 
 .hukuki-metin li + li {
@@ -149,7 +149,7 @@
 
 .hukuki-metin .hukuki-surum {
   margin-top: 0;
-  color: #6f8397;
+  color: var(--muted-foreground);
   font-size: 11px;
 }
 
@@ -159,14 +159,14 @@
   gap: 10px 16px;
   padding: 18px 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.09);
-  background: #08131f;
+  background: var(--background);
 }
 
 .hukuki-onay-alani label {
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  color: #b7c5d3;
+  color: #d4d4d8;
   cursor: pointer;
   font-size: 11px;
   line-height: 1.45;
@@ -175,7 +175,7 @@
 .hukuki-onay-alani input {
   flex: 0 0 auto;
   margin-top: 2px;
-  accent-color: #61e6c5;
+  accent-color: var(--primary);
 }
 
 .hukuki-onay-alani > p {
@@ -192,10 +192,10 @@
   padding: 12px 20px;
   border: 0;
   border-radius: 999px;
-  background: linear-gradient(135deg, #61e6c5, #79cfe6);
-  color: #06131e;
+  background: var(--primary);
+  color: var(--background);
   cursor: pointer;
-  font-weight: 900;
+  font-weight: 600;
 }
 
 .hukuki-onay-alani > button:disabled {

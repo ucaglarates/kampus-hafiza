@@ -52,8 +52,20 @@ type IconName =
   | "layers"
   | "menu"
   | "close"
-  | "plus";
+  | "plus"
+  | "home"
+  | "search"
+  | "bell"
+  | "flag"
+  | "user"
+  | "shield";
 const paths: Record<IconName, string> = {
+  home: "m3 10 9-7 9 7v11h-7v-7h-4v7H3Z",
+  search: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
+  bell: "M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4",
+  flag: "M4 22V3c5-4 11 4 16 0v11c-5 4-11-4-16 0",
+  user: "M20 21v-2a6 6 0 0 0-6-6h-4a6 6 0 0 0-6 6v2M16 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
+  shield: "m12 3 9 4v6c0 5-9 9-9 9s-9-4-9-9V7Zm-4 9 3 3 5-6",
   arrow: "M5 12h14m-6-6 6 6-6 6",
   book: "M12 5v16M3 3h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5v16h-5a4 4 0 0 0-4 2 4 4 0 0 0-4-2H3Z",
   code: "m8 7-5 5 5 5m8-10 5 5-5 5m-3-14-2 18",

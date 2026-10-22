@@ -3,10 +3,7 @@
 // ============================================================
 
 export type KullaniciRolu =
-  | "student"
-  | "assistant_moderator"
-  | "moderator"
-  | "founder";
+  "student" | "assistant_moderator" | "moderator" | "founder";
 
 export type KullaniciProfili = {
   id: string;
@@ -36,3 +33,19 @@ export type KullaniciProfili = {
   created_at: string;
   updated_at: string;
 };
+
+export type ToplulukProfili = Pick<
+  KullaniciProfili,
+  | "id"
+  | "full_name"
+  | "faculty"
+  | "department"
+  | "expertise_areas"
+  | "role"
+  | "level"
+  | "xp"
+  | "verified_contributions"
+  | "helpful_votes"
+  | "avatar_url"
+  | "cover_url"
+>;

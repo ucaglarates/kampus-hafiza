@@ -36,12 +36,11 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
         <h3>2. İşlenen veri kategorileri</h3>
         <ul>
           <li>Kimlik ve iletişim: ad-soyad, öğrenci e-postası.</li>
-          <li>
-            Eğitim: üniversite, fakülte, bölüm, sınıf ve ilgi alanları.
-          </li>
+          <li>Eğitim: üniversite, fakülte, bölüm, sınıf ve ilgi alanları.</li>
           <li>
             Platform kullanımı: gönderi, yorum, beğeni, takip, topluluk,
-            şikâyet, seviye, XP ve doğrulama testi sonuçları.
+            şikâyet, şikâyete konu içerik kopyası, işlem gerekçesi ve durum
+            geçmişi, seviye, XP ve doğrulama testi sonuçları.
           </li>
           <li>
             Görsel ve teknik veriler: yüklediğin profil/topluluk görselleri,
@@ -60,12 +59,12 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
         <h3>4. Toplama yöntemi, hukuki sebep ve aktarım</h3>
         <p>
           Veriler kayıt formları, platformdaki işlemlerin ve yüklemelerin
-          üzerinden elektronik ortamda toplanır. Sözleşmenin kurulması ve
-          ifası, hukuki yükümlülükler, meşru menfaat ve gerekli durumlarda açık
-          rıza hukuki sebeplerine dayanılır. Kimlik doğrulama, veritabanı ve
-          dosya saklama için Supabase; yayınlama için barındırma hizmeti
-          sağlayıcıları teknik hizmet veren olarak kullanılabilir. Kanunen
-          zorunlu hâllerde yetkili mercilerle paylaşım yapılabilir.
+          üzerinden elektronik ortamda toplanır. Sözleşmenin kurulması ve ifası,
+          hukuki yükümlülükler, meşru menfaat ve gerekli durumlarda açık rıza
+          hukuki sebeplerine dayanılır. Kimlik doğrulama, veritabanı ve dosya
+          saklama için Supabase; yayınlama için barındırma hizmeti sağlayıcıları
+          teknik hizmet veren olarak kullanılabilir. Kanunen zorunlu hâllerde
+          yetkili mercilerle paylaşım yapılabilir.
         </p>
         <p>
           Supabase altyapısının yurt dışındaki sunucuları kullanabilmesi
@@ -75,13 +74,33 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
           etkileyebilir.
         </p>
 
-        <h3>5. Hakların</h3>
+        <h3>5. Yetkili erişim ve resmî talepler</h3>
+        <p>
+          Platform mevcut sürümünde anonim gönderi özelliği sunmaz. Bir takma ad
+          kullanılması, hesaba bağlı verilerin teknik olarak anonimleştirildiği
+          anlamına gelmez. Gerçekten anonimleştirilmiş verilerden kimlik geri
+          çıkarılamaz.
+        </p>
+        <p>
+          Proje yöneticisinin ve yetkili ekibin kişisel verilere erişimi;
+          hizmetin işletilmesi, somut bir şikâyetin incelenmesi, güvenlik veya
+          hukuki yükümlülük gibi belirli bir amaç ve geçerli hukuki sebep ile
+          sınırlıdır. Yönetici olmak tek başına sınırsız inceleme veya paylaşım
+          yetkisi vermez. Şikâyet ekranındaki kurucu hesap inceleme işlemi;
+          inceleyen hesap, ilgili gönderi, amaç, gerekçe, varsa resmî talep
+          referansı ve zaman bilgisiyle kaydedilir. Öğrenci e-postası ve hukuki
+          onay kayıtları topluluk profil sorgularında diğer öğrencilere
+          sunulmaz. Mahkeme, savcılık ve diğer yetkili makamların taleplerinde
+          talebin yetkisi, hukuki dayanağı ve kapsamı değerlendirilir; yalnızca
+          gerekli veriler yetkili alıcıya iletilir.
+        </p>
+        <h3>6. Hakların</h3>
         <p>
           Verilerinin işlenip işlenmediğini öğrenme, bilgi isteme, amacına uygun
-          kullanılıp kullanılmadığını öğrenme, aktarılan kişileri bilme, düzeltme,
-          silme/yok etme, otomatik işleme sonucuna itiraz ve zararın giderilmesini
-          isteme haklarına sahipsin. Profil ekranından hesabını silebilir veya
-          yukarıdaki iletişim adresine başvurabilirsin.
+          kullanılıp kullanılmadığını öğrenme, aktarılan kişileri bilme,
+          düzeltme, silme/yok etme, otomatik işleme sonucuna itiraz ve zararın
+          giderilmesini isteme haklarına sahipsin. Profil ekranından hesabını
+          silebilir veya yukarıdaki iletişim adresine başvurabilirsin.
         </p>
       </>
     );
@@ -102,17 +121,31 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
         </p>
         <h3>Görünür içerikler</h3>
         <p>
-          Adın, bölümün, profil görselin, gönderilerin, yorumların, toplulukların
-          ve takip bilgilerin giriş yapan diğer öğrencilere görünür. Özel veya
-          hassas kişisel verilerini gönderilerde paylaşmamalısın.
+          Adın, bölümün, profil görselin, gönderilerin, yorumların,
+          toplulukların ve takip bilgilerin giriş yapan diğer öğrencilere
+          görünür. Özel veya hassas kişisel verilerini gönderilerde
+          paylaşmamalısın.
         </p>
         <h3>Saklama ve silme</h3>
         <p>
-          Veriler hesabın açık olduğu ve hizmetin sunulması için gerektiği sürece
-          tutulur. Hesabını sildiğinde profilin ve hesabına bağlı içerikler
-          kalıcı olarak silinir. Hukuki zorunluluk veya güvenlik incelemesi
-          nedeniyle saklanması gereken sınırlı kayıtlar ilgili süre sonunda
-          silinir ya da anonimleştirilir.
+          Gönderideki “Kaldır” işlemi, gönderiyi normal akıştan kaldırır ve
+          veritabanında pasif duruma getirir; kalıcı veri imhası değildir. Pasif
+          gönderi, yetkili veritabanı yöneticisi tarafından gerekçeli olarak
+          yeniden etkinleştirilebilir. Şikâyete konu içeriğin kayıt anındaki
+          kopyası, şikâyet açıklaması ve işlem geçmişi inceleme amacıyla
+          saklanır; yalnızca şikâyetçi ve yetkili moderasyon ekibi şikâyet
+          kaydını görebilir. İşlem açıklaması şikâyetçiye bildirim olarak
+          iletilir.
+        </p>
+        <p>
+          Pasif kayıtlar için bu sürümde otomatik silme süresi tanımlanmamıştır.
+          Bu durum süresiz saklamanın hukuken zorunlu veya her durumda uygun
+          olduğu anlamına gelmez. Saklama, belirtilen amacın ve geçerli hukuki
+          sebebin devamı ile sınırlıdır; ihtiyaç sona erdiğinde silme, yok etme
+          veya anonimleştirme gerekir. Silme talepleri ve hukuki saklama
+          yükümlülükleri ayrıca değerlendirilir. Hesabını kalıcı olarak silme
+          işlemi, hesabına bağlı içerikleri de siler; yalnızca gönderiyi pasife
+          alma işleminden farklıdır.
         </p>
         <h3>Çerezler ve oturum</h3>
         <p>
@@ -138,9 +171,9 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
         </p>
         <h3>Hesap ve uygunluk</h3>
         <p>
-          Platform 18 yaşını doldurmuş MCBÜ öğrencileri içindir. Gerçek ve güncel
-          bilgi vermeli, hesabını güvenli tutmalı ve başka bir kişiyi taklit
-          etmemelisin. Hesabında yapılan işlemlerden sen sorumlusun.
+          Platform 18 yaşını doldurmuş MCBÜ öğrencileri içindir. Gerçek ve
+          güncel bilgi vermeli, hesabını güvenli tutmalı ve başka bir kişiyi
+          taklit etmemelisin. Hesabında yapılan işlemlerden sen sorumlusun.
         </p>
         <h3>Kullanıcı içerikleri</h3>
         <p>
@@ -155,8 +188,8 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
           Kuralları ihlal eden içerikler incelenebilir, erişimden kaldırılabilir
           ve hesaplar sınırlandırılabilir. Kullanıcı paylaşımları öğrencilerin
           görüşüdür; KampüsHafıza bunların doğruluğunu garanti etmez. Yapay zekâ
-          özetleri hata içerebilir ve akademik, hukuki, tıbbi ya da mali danışmanlık
-          yerine geçmez.
+          özetleri hata içerebilir ve akademik, hukuki, tıbbi ya da mali
+          danışmanlık yerine geçmez.
         </p>
         <h3>Değişiklikler</h3>
         <p>
@@ -182,7 +215,9 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
           Telif hakkı sana ait olmayan ders notu, kitap, görsel, yazılım veya
           başka içeriği izinsiz yükleme.
         </li>
-        <li>Spam, dolandırıcılık, zararlı bağlantı ve yasa dışı içerik yasaktır.</li>
+        <li>
+          Spam, dolandırıcılık, zararlı bağlantı ve yasa dışı içerik yasaktır.
+        </li>
         <li>
           Bilgi aktarırken kaynak belirt, kesin olmayan bilgiyi gerçekmiş gibi
           sunma ve sınav sorularını izinsiz yayımlama.
@@ -195,9 +230,7 @@ function HukukiIcerik({ sekme }: { sekme: HukukiSekme }) {
       <p>
         Moderatörler yalnızca topluluk güvenliği amacıyla işlem yapar. Bir
         moderasyon kararına itiraz etmek için
-        <a href="mailto:2528002070@ogr.cbu.edu.tr">
-          2528002070@ogr.cbu.edu.tr
-        </a>
+        <a href="mailto:2528002070@ogr.cbu.edu.tr">2528002070@ogr.cbu.edu.tr</a>
         adresine içerik bağlantısı ve açıklamayla başvurabilirsin.
       </p>
     </>
@@ -318,7 +351,9 @@ function HukukiMerkez({
                 checked={kosullariKabul}
                 onChange={(event) => setKosullariKabul(event.target.checked)}
               />
-              <span>Kullanım Koşulları ve Topluluk Kuralları'nı kabul ediyorum.</span>
+              <span>
+                Kullanım Koşulları ve Topluluk Kuralları'nı kabul ediyorum.
+              </span>
             </label>
             <label>
               <input
@@ -355,4 +390,3 @@ function HukukiMerkez({
 }
 
 export default HukukiMerkez;
-

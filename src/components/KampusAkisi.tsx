@@ -1,4 +1,6 @@
 import {
+  lazy,
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -9,7 +11,7 @@ import type { User } from "@supabase/supabase-js";
 
 import { seviyeBilgisiniGetir } from "../data/seviyeler";
 import { supabase } from "../lib/supabase";
-import type { KullaniciProfili } from "../types/profil";
+import type { KullaniciProfili, ToplulukProfili } from "../types/profil";
 import type {
   AkisSekmesi,
   Begeni,
@@ -22,9 +24,12 @@ import type {
   ToplulukUyesi,
   Yorum,
 } from "../types/sosyal";
+import { Icon } from "./ui/primitives";
 import OgrenciPaneli from "./OgrenciPaneli";
 
 import "./KampusAkisi.css";
+
+const ReportCenter = lazy(() => import("./ReportCenter"));
 
 type KampusAkisiProps = {
   kullanici: User;
@@ -71,10 +76,7 @@ const raporNedenleri: Array<{
   { id: "other", ad: "Diğer" },
 ];
 
-const raporNedeniAdi = (neden: IcerikRaporu["reason"]) =>
-  raporNedenleri.find((item) => item.id === neden)?.ad ?? "Diğer";
-
-const rolAdi = (profil?: KullaniciProfili) => {
+const rolAdi = (profil?: Pick<KullaniciProfili, "role">) => {
   if (profil?.role === "founder") return "Kurucu";
   if (profil?.role === "moderator") return "Moderatör";
   if (profil?.role === "assistant_moderator") return "Mod. Yardımcısı";
@@ -122,9 +124,9 @@ function KampusAkisi({
   const [hedefTopluluk, setHedefTopluluk] = useState("");
   const [paylasiliyor, setPaylasiliyor] = useState(false);
   const [acikYorumlar, setAcikYorumlar] = useState<string[]>([]);
-  const [yorumTaslaklari, setYorumTaslaklari] = useState<Record<string, string>>(
-    {},
-  );
+  const [yorumTaslaklari, setYorumTaslaklari] = useState<
+    Record<string, string>
+  >({});
   const [toplulukFormuAcik, setToplulukFormuAcik] = useState(false);
   const [toplulukAdi, setToplulukAdi] = useState("");
   const [toplulukAciklamasi, setToplulukAciklamasi] = useState("");
@@ -139,73 +141,83 @@ function KampusAkisi({
     community_id?: string;
     profile_id?: string;
   } | null>(null);
-  const [raporNedeni, setRaporNedeni] = useState<IcerikRaporu["reason"]>("spam");
+  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+  const [raporNedeni, setRaporNedeni] =
+    useState<IcerikRaporu["reason"]>("spam");
   const [raporDetayi, setRaporDetayi] = useState("");
   const [raporGonderiliyor, setRaporGonderiliyor] = useState(false);
   const [hesapSilmeMetni, setHesapSilmeMetni] = useState("");
   const [hesapSiliniyor, setHesapSiliniyor] = useState(false);
 
-  const moderatorMu = [
-    "assistant_moderator",
-    "moderator",
-    "founder",
-  ].includes(profil.role);
+  const moderatorMu = ["assistant_moderator", "moderator", "founder"].includes(
+    profil.role,
+  );
 
-  const avatarIcerigi = (kisi?: KullaniciProfili | null) =>
+  const avatarIcerigi = (
+    kisi?: Pick<KullaniciProfili, "full_name" | "avatar_url"> | null,
+  ) =>
     kisi?.avatar_url ? (
       <img src={kisi.avatar_url} alt={`${kisi.full_name} profil fotoğrafı`} />
     ) : (
       (kisi?.full_name || "Ö").charAt(0).toUpperCase()
     );
 
-  const verileriGetir = useCallback(async (sessiz = false) => {
-    if (sessiz) setYenileniyor(true);
-    else setYukleniyor(true);
+  const verileriGetir = useCallback(
+    async (sessiz = false) => {
+      if (sessiz) setYenileniyor(true);
+      else setYukleniyor(true);
 
-    const sonuclar = await Promise.all([
-      supabase.from("posts").select("*").order("created_at", { ascending: false }),
-      supabase.from("profiles").select("*").order("full_name"),
-      supabase
-        .from("communities")
-        .select("*")
-        .order("created_at", { ascending: false }),
-      supabase.from("community_members").select("*"),
-      supabase.from("comments").select("*").order("created_at"),
-      supabase.from("post_likes").select("*"),
-      supabase.from("follows").select("*"),
-      supabase
-        .from("notifications")
-        .select("*")
-        .eq("recipient_id", kullanici.id)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("reports")
-        .select("*")
-        .order("created_at", { ascending: false }),
-    ]);
+      const sonuclar = await Promise.all([
+        supabase
+          .from("posts")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase.from("community_profiles").select("*").order("full_name"),
+        supabase
+          .from("communities")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase.from("community_members").select("*"),
+        supabase.from("comments").select("*").order("created_at"),
+        supabase.from("post_likes").select("*"),
+        supabase.from("follows").select("*"),
+        supabase
+          .from("notifications")
+          .select("*")
+          .eq("recipient_id", kullanici.id)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("reports")
+          .select("*")
+          .order("created_at", { ascending: false }),
+      ]);
 
-    const ilkHata = sonuclar.find((sonuc) => sonuc.error)?.error;
+      const ilkHata = sonuclar.find((sonuc) => sonuc.error)?.error;
 
-    if (ilkHata) {
-      setHata(`Canlı akış okunamadı: ${ilkHata.message}`);
-    } else {
-      setHata("");
-      setVeriler({
-        gonderiler: (sonuclar[0].data ?? []) as Gonderi[],
-        profiller: (sonuclar[1].data ?? []) as KullaniciProfili[],
-        topluluklar: (sonuclar[2].data ?? []) as Topluluk[],
-        uyelikler: (sonuclar[3].data ?? []) as ToplulukUyesi[],
-        yorumlar: (sonuclar[4].data ?? []) as Yorum[],
-        begeniler: (sonuclar[5].data ?? []) as Begeni[],
-        takipler: (sonuclar[6].data ?? []) as Takip[],
-        bildirimler: (sonuclar[7].data ?? []) as Bildirim[],
-        raporlar: (sonuclar[8].data ?? []) as IcerikRaporu[],
-      });
-    }
+      if (ilkHata) {
+        setHata(`Canlı akış okunamadı: ${ilkHata.message}`);
+      } else {
+        setHata("");
+        setVeriler({
+          gonderiler: ((sonuclar[0].data ?? []) as Gonderi[]).filter(
+            (post) => post.is_active !== false,
+          ),
+          profiller: (sonuclar[1].data ?? []) as ToplulukProfili[],
+          topluluklar: (sonuclar[2].data ?? []) as Topluluk[],
+          uyelikler: (sonuclar[3].data ?? []) as ToplulukUyesi[],
+          yorumlar: (sonuclar[4].data ?? []) as Yorum[],
+          begeniler: (sonuclar[5].data ?? []) as Begeni[],
+          takipler: (sonuclar[6].data ?? []) as Takip[],
+          bildirimler: (sonuclar[7].data ?? []) as Bildirim[],
+          raporlar: (sonuclar[8].data ?? []) as IcerikRaporu[],
+        });
+      }
 
-    setYukleniyor(false);
-    setYenileniyor(false);
-  }, [kullanici.id]);
+      setYukleniyor(false);
+      setYenileniyor(false);
+    },
+    [kullanici.id],
+  );
 
   useEffect(() => {
     void verileriGetir();
@@ -259,7 +271,16 @@ function KampusAkisi({
       )
       .subscribe();
 
+    // RLS may suppress an UPDATE when a post becomes invisible. Reconcile
+    // periodically and on focus so stale content also disappears for readers.
+    const refreshVisible = () => {
+      if (!document.hidden) void verileriGetir(true);
+    };
+    const refreshTimer = window.setInterval(refreshVisible, 30000);
+    window.addEventListener("focus", refreshVisible);
     return () => {
+      window.clearInterval(refreshTimer);
+      window.removeEventListener("focus", refreshVisible);
       void supabase.removeChannel(kanal);
     };
   }, [kullanici.id, verileriGetir]);
@@ -331,9 +352,7 @@ function KampusAkisi({
     }
 
     if (sekme === "profil" && seciliProfilId) {
-      return secili.filter(
-        (gonderi) => gonderi.author_id === seciliProfilId,
-      );
+      return secili.filter((gonderi) => gonderi.author_id === seciliProfilId);
     }
 
     if (sekme === "takip") {
@@ -428,6 +447,11 @@ function KampusAkisi({
       await verileriGetir(true);
     }
 
+    if (bildirim.type === "report_update") {
+      setSelectedReportId(bildirim.report_id);
+      sekmeyeGit("raporlar");
+      return;
+    }
     if (bildirim.community_id) {
       topluluguAc(bildirim.community_id);
       return;
@@ -556,28 +580,30 @@ function KampusAkisi({
       .from("kampus-medya")
       .getPublicUrl(dosyaYolu);
 
-    const eskiUrl = tur === "avatar"
-      ? profil.avatar_url
-      : tur === "cover"
-        ? profil.cover_url
-        : topluluk?.logo_url;
+    const eskiUrl =
+      tur === "avatar"
+        ? profil.avatar_url
+        : tur === "cover"
+          ? profil.cover_url
+          : topluluk?.logo_url;
 
-    const guncelleme = tur === "community" && topluluk
-      ? supabase
-          .from("communities")
-          .update({
-            logo_url: genelAdres.publicUrl,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", topluluk.id)
-      : supabase
-          .from("profiles")
-          .update({
-            [tur === "avatar" ? "avatar_url" : "cover_url"]:
-              genelAdres.publicUrl,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", kullanici.id);
+    const guncelleme =
+      tur === "community" && topluluk
+        ? supabase
+            .from("communities")
+            .update({
+              logo_url: genelAdres.publicUrl,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", topluluk.id)
+        : supabase
+            .from("profiles")
+            .update({
+              [tur === "avatar" ? "avatar_url" : "cover_url"]:
+                genelAdres.publicUrl,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", kullanici.id);
 
     const { error: kayitHatasi } = await guncelleme;
     if (kayitHatasi) {
@@ -607,26 +633,28 @@ function KampusAkisi({
     tur: "avatar" | "cover" | "community",
     topluluk?: Topluluk,
   ) => {
-    const mevcutUrl = tur === "avatar"
-      ? profil.avatar_url
-      : tur === "cover"
-        ? profil.cover_url
-        : topluluk?.logo_url;
+    const mevcutUrl =
+      tur === "avatar"
+        ? profil.avatar_url
+        : tur === "cover"
+          ? profil.cover_url
+          : topluluk?.logo_url;
     if (!mevcutUrl) return;
 
     setMedyaYukleniyor(tur);
-    const guncelleme = tur === "community" && topluluk
-      ? supabase
-          .from("communities")
-          .update({ logo_url: null, updated_at: new Date().toISOString() })
-          .eq("id", topluluk.id)
-      : supabase
-          .from("profiles")
-          .update({
-            [tur === "avatar" ? "avatar_url" : "cover_url"]: null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", kullanici.id);
+    const guncelleme =
+      tur === "community" && topluluk
+        ? supabase
+            .from("communities")
+            .update({ logo_url: null, updated_at: new Date().toISOString() })
+            .eq("id", topluluk.id)
+        : supabase
+            .from("profiles")
+            .update({
+              [tur === "avatar" ? "avatar_url" : "cover_url"]: null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", kullanici.id);
 
     const { error } = await guncelleme;
     if (error) {
@@ -748,18 +776,28 @@ function KampusAkisi({
   };
 
   const gonderiyiSil = async (gonderiId: string) => {
-    if (!window.confirm("Bu gönderiyi silmek istediğine emin misin?")) return;
-    const { error } = await supabase.from("posts").delete().eq("id", gonderiId);
+    if (
+      !window.confirm(
+        "Gönderi akıştan kaldırılıp pasife alınacak. Yetkili veritabanı yöneticisi gerektiğinde geri yükleyebilir. Devam edilsin mi?",
+      )
+    )
+      return;
+    const { error } = await supabase.rpc("deactivate_post", {
+      target_post_id: gonderiId,
+    });
     if (error) setBildirim(error.message);
     else {
-      setBildirim("Gönderi silindi.");
+      setBildirim("Gönderi pasife alındı ve akıştan kaldırıldı.");
       await verileriGetir(true);
     }
   };
 
   const yorumuSil = async (yorumId: string) => {
     if (!window.confirm("Bu yorumu silmek istediğine emin misin?")) return;
-    const { error } = await supabase.from("comments").delete().eq("id", yorumId);
+    const { error } = await supabase
+      .from("comments")
+      .delete()
+      .eq("id", yorumId);
     if (error) setBildirim(error.message);
     else {
       setBildirim("Yorum silindi.");
@@ -777,7 +815,9 @@ function KampusAkisi({
     });
     if (error) setBildirim(error.message);
     else {
-      setBildirim(durum === "approved" ? "Gönderi onaylandı." : "Gönderi reddedildi.");
+      setBildirim(
+        durum === "approved" ? "Gönderi onaylandı." : "Gönderi reddedildi.",
+      );
       await verileriGetir(true);
     }
   };
@@ -812,30 +852,6 @@ function KampusAkisi({
       await verileriGetir(true);
     }
     setRaporGonderiliyor(false);
-  };
-
-  const raporuSonuclandir = async (
-    raporId: string,
-    durum: "resolved" | "rejected",
-  ) => {
-    const { error } = await supabase
-      .from("reports")
-      .update({
-        status: durum,
-        reviewed_by: kullanici.id,
-        reviewed_at: new Date().toISOString(),
-      })
-      .eq("id", raporId);
-
-    if (error) setBildirim(`Rapor güncellenemedi: ${error.message}`);
-    else {
-      setBildirim(
-        durum === "resolved"
-          ? "Rapor çözüldü olarak işaretlendi."
-          : "Rapor ihlal yok olarak kapatıldı.",
-      );
-      await verileriGetir(true);
-    }
   };
 
   const hesabimiSil = async () => {
@@ -947,7 +963,7 @@ function KampusAkisi({
 
   const topluluguSil = async (topluluk: Topluluk) => {
     const onay = window.confirm(
-      `“${topluluk.name}” topluluğu; içindeki gönderiler ve yorumlarla birlikte kalıcı olarak silinecek. Devam edilsin mi?`,
+      `“${topluluk.name}” topluluğu silinecek. İçindeki gönderiler akıştan kaldırılıp pasif arşivde korunacak. Devam edilsin mi?`,
     );
     if (!onay) return;
 
@@ -968,7 +984,7 @@ function KampusAkisi({
     setSeciliTopluluk(null);
     setHedefTopluluk("");
     setSekme("topluluklar");
-    setBildirim("Topluluk ve topluluğa bağlı içerikler silindi.");
+    setBildirim("Topluluk silindi; bağlı gönderiler pasife alındı.");
     await verileriGetir(true);
   };
 
@@ -1006,6 +1022,12 @@ function KampusAkisi({
       ? profilHaritasi.get(item.actor_id)?.full_name || "Bir öğrenci"
       : "Moderasyon ekibi";
 
+    if (item.type === "report_update") {
+      return {
+        simge: "⚑",
+        metin: item.message || "Şikâyetinin durumu güncellendi.",
+      };
+    }
     if (item.type === "follow") {
       return { simge: "＋", metin: `${aktor} seni takip etmeye başladı.` };
     }
@@ -1016,7 +1038,10 @@ function KampusAkisi({
       return { simge: "♡", metin: `${aktor} gönderini faydalı buldu.` };
     }
     if (item.type === "post_approved") {
-      return { simge: "✓", metin: "Gönderin onaylandı ve canlı akışta yayınlandı." };
+      return {
+        simge: "✓",
+        metin: "Gönderin onaylandı ve canlı akışta yayınlandı.",
+      };
     }
     if (item.type === "post_rejected") {
       return { simge: "×", metin: "Gönderin moderasyon sonucunda reddedildi." };
@@ -1047,9 +1072,7 @@ function KampusAkisi({
     const yorumlarAcik = acikYorumlar.includes(gonderi.id);
     const toplulukKurucusuMu = topluluk?.founder_id === kullanici.id;
     const silebilir =
-      gonderi.author_id === kullanici.id ||
-      moderatorMu ||
-      toplulukKurucusuMu;
+      gonderi.author_id === kullanici.id || moderatorMu || toplulukKurucusuMu;
     const seviye = seviyeBilgisiniGetir(yazar?.level ?? 1);
 
     return (
@@ -1074,7 +1097,9 @@ function KampusAkisi({
                   {rolAdi(yazar)}
                 </span>
               )}
-              <small>Seviye {yazar?.level ?? 1} · {seviye.ad}</small>
+              <small>
+                Seviye {yazar?.level ?? 1} · {seviye.ad}
+              </small>
             </div>
             <span>{tarihYaz(gonderi.created_at)}</span>
           </div>
@@ -1109,7 +1134,9 @@ function KampusAkisi({
           </div>
 
           {gonderi.moderation_status !== "approved" && (
-            <div className={`moderasyon-durumu moderasyon-durumu--${gonderi.moderation_status}`}>
+            <div
+              className={`moderasyon-durumu moderasyon-durumu--${gonderi.moderation_status}`}
+            >
               {gonderi.moderation_status === "pending"
                 ? "İnceleme bekliyor"
                 : "Yayınlanması uygun bulunmadı"}
@@ -1118,10 +1145,16 @@ function KampusAkisi({
 
           {moderatorMu && gonderi.moderation_status === "pending" && (
             <div className="moderasyon-butonlari">
-              <button type="button" onClick={() => void gonderiyiYonet(gonderi.id, "approved")}>
+              <button
+                type="button"
+                onClick={() => void gonderiyiYonet(gonderi.id, "approved")}
+              >
                 ✓ Onayla
               </button>
-              <button type="button" onClick={() => void gonderiyiYonet(gonderi.id, "rejected")}>
+              <button
+                type="button"
+                onClick={() => void gonderiyiYonet(gonderi.id, "rejected")}
+              >
                 × Reddet
               </button>
             </div>
@@ -1149,8 +1182,13 @@ function KampusAkisi({
               ♡ <span>{begeniler.length}</span> Faydalı
             </button>
             {gonderi.author_id !== kullanici.id && (
-              <button type="button" onClick={() => void takipDegistir(gonderi.author_id)}>
-                {takipEttigimIdler.has(gonderi.author_id) ? "✓ Takipte" : "+ Takip et"}
+              <button
+                type="button"
+                onClick={() => void takipDegistir(gonderi.author_id)}
+              >
+                {takipEttigimIdler.has(gonderi.author_id)
+                  ? "✓ Takipte"
+                  : "+ Takip et"}
               </button>
             )}
             {gonderi.author_id !== kullanici.id && (
@@ -1165,8 +1203,12 @@ function KampusAkisi({
               </button>
             )}
             {silebilir && (
-              <button className="sil-aksiyonu" type="button" onClick={() => void gonderiyiSil(gonderi.id)}>
-                Sil
+              <button
+                className="sil-aksiyonu"
+                type="button"
+                onClick={() => void gonderiyiSil(gonderi.id)}
+              >
+                Kaldır
               </button>
             )}
           </div>
@@ -1189,7 +1231,7 @@ function KampusAkisi({
                             type="button"
                             onClick={() => void yorumuSil(yorum.id)}
                           >
-                            Sil
+                            Kaldır
                           </button>
                         )}
                         {yorum.author_id !== kullanici.id && (
@@ -1242,7 +1284,11 @@ function KampusAkisi({
 
     return (
       <article className="topluluk-karti" key={topluluk.id}>
-        <button className="topluluk-karti__govde" type="button" onClick={() => topluluguAc(topluluk.id)}>
+        <button
+          className="topluluk-karti__govde"
+          type="button"
+          onClick={() => topluluguAc(topluluk.id)}
+        >
           <span className="topluluk-karti__simge">
             {topluluk.logo_url ? (
               <img src={topluluk.logo_url} alt={`${topluluk.name} logosu`} />
@@ -1273,19 +1319,19 @@ function KampusAkisi({
     ? seciliToplulukBilgisi.name
     : sekme === "profil" && seciliProfilId && goruntulenenProfil
       ? goruntulenenProfil.full_name
-    : sekme === "anasayfa"
-      ? "Ana Sayfa"
-      : sekme === "takip"
-        ? "Takip Ettiklerim"
-      : sekme === "arastir"
-          ? "Araştır"
-          : sekme === "bildirimler"
-            ? "Bildirimler"
-          : sekme === "raporlar"
-            ? "Şikâyet Merkezi"
-          : sekme === "topluluklar"
-            ? "Topluluklar"
-            : "Profilim";
+      : sekme === "anasayfa"
+        ? "Ana Sayfa"
+        : sekme === "takip"
+          ? "Takip Ettiklerim"
+          : sekme === "arastir"
+            ? "Araştır"
+            : sekme === "bildirimler"
+              ? "Bildirimler"
+              : sekme === "raporlar"
+                ? "Şikâyet Merkezi"
+                : sekme === "topluluklar"
+                  ? "Topluluklar"
+                  : "Profilim";
 
   return (
     <div className="kampus-uygulamasi">
@@ -1351,49 +1397,105 @@ function KampusAkisi({
       )}
 
       <aside className="sol-menu">
-        <button className="uygulama-markasi" type="button" onClick={() => sekmeyeGit("anasayfa")}>
+        <button
+          className="uygulama-markasi"
+          type="button"
+          onClick={() => sekmeyeGit("anasayfa")}
+        >
           <span>K</span>
           <strong>KampüsHafıza</strong>
         </button>
 
         <nav aria-label="Uygulama menüsü">
-          <button className={sekme === "anasayfa" && !seciliTopluluk ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("anasayfa")}>
-            <span>⌂</span> Ana Sayfa
+          <button
+            className={sekme === "anasayfa" && !seciliTopluluk ? "aktif" : ""}
+            type="button"
+            onClick={() => sekmeyeGit("anasayfa")}
+          >
+            <span>
+              <Icon name="home" />
+            </span>{" "}
+            Ana Sayfa
           </button>
-          <button className={sekme === "takip" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("takip")}>
-            <span>◉</span> Takip Ettiklerim
+          <button
+            className={sekme === "takip" ? "aktif" : ""}
+            type="button"
+            onClick={() => sekmeyeGit("takip")}
+          >
+            <span>
+              <Icon name="users" />
+            </span>{" "}
+            Takip Ettiklerim
           </button>
-          <button className={sekme === "arastir" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("arastir")}>
-            <span>⌕</span> Araştır
+          <button
+            className={sekme === "arastir" ? "aktif" : ""}
+            type="button"
+            onClick={() => sekmeyeGit("arastir")}
+          >
+            <span>
+              <Icon name="search" />
+            </span>{" "}
+            Araştır
           </button>
-          <button className={sekme === "bildirimler" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("bildirimler")}>
+          <button
+            className={sekme === "bildirimler" ? "aktif" : ""}
+            type="button"
+            onClick={() => sekmeyeGit("bildirimler")}
+          >
             <span className="menu-bildirim-simgesi">
-              ♧
-              {okunmamisBildirimSayisi > 0 && <b>{Math.min(okunmamisBildirimSayisi, 99)}</b>}
+              <Icon name="bell" />
+              {okunmamisBildirimSayisi > 0 && (
+                <b>{Math.min(okunmamisBildirimSayisi, 99)}</b>
+              )}
             </span>
             Bildirimler
           </button>
-          {moderatorMu && (
-            <button className={sekme === "raporlar" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("raporlar")}>
-              <span className="menu-bildirim-simgesi">
-                ⚑
-                {bekleyenRaporSayisi > 0 && <b>{Math.min(bekleyenRaporSayisi, 99)}</b>}
-              </span>
-              Şikâyetler
-            </button>
-          )}
-          <button className={sekme === "topluluklar" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("topluluklar")}>
-            <span>◎</span> Topluluklar
+          <button
+            className={sekme === "raporlar" ? "aktif" : ""}
+            type="button"
+            onClick={() => sekmeyeGit("raporlar")}
+          >
+            <span className="menu-bildirim-simgesi">
+              <Icon name="flag" />
+              {bekleyenRaporSayisi > 0 && (
+                <b>{Math.min(bekleyenRaporSayisi, 99)}</b>
+              )}
+            </span>
+            {moderatorMu ? "Şikâyetler" : "Şikâyetlerim"}
           </button>
-          <button className={sekme === "profil" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("profil")}>
-            <span>♙</span> Profilim
+          <button
+            className={sekme === "topluluklar" ? "aktif" : ""}
+            type="button"
+            onClick={() => sekmeyeGit("topluluklar")}
+          >
+            <span>
+              <Icon name="layers" />
+            </span>{" "}
+            Topluluklar
+          </button>
+          <button
+            className={sekme === "profil" ? "aktif" : ""}
+            type="button"
+            onClick={() => sekmeyeGit("profil")}
+          >
+            <span>
+              <Icon name="user" />
+            </span>{" "}
+            Profilim
           </button>
         </nav>
 
-        <button className="sol-menu__paylas" type="button" onClick={() => {
-          sekmeyeGit("anasayfa");
-          window.setTimeout(() => document.getElementById("gonderi-olustur")?.focus(), 350);
-        }}>
+        <button
+          className="sol-menu__paylas"
+          type="button"
+          onClick={() => {
+            sekmeyeGit("anasayfa");
+            window.setTimeout(
+              () => document.getElementById("gonderi-olustur")?.focus(),
+              350,
+            );
+          }}
+        >
           Bilgi paylaş
         </button>
 
@@ -1402,16 +1504,24 @@ function KampusAkisi({
           type="button"
           onClick={hukukiMetinleriAc}
         >
-          ◇ Gizlilik ve koşullar
+          <Icon name="shield" /> Gizlilik ve koşullar
         </button>
 
         <div className="sol-menu__profil">
           <span>{avatarIcerigi(profil)}</span>
           <div>
             <strong>{profil.full_name}</strong>
-            <small>{rolAdi(profil)} · S{profil.level}</small>
+            <small>
+              {rolAdi(profil)} · S{profil.level}
+            </small>
           </div>
-          <button type="button" aria-label="Çıkış yap" onClick={() => void cikisYap()}>↪</button>
+          <button
+            type="button"
+            aria-label="Çıkış yap"
+            onClick={() => void cikisYap()}
+          >
+            ↪
+          </button>
         </div>
       </aside>
 
@@ -1431,7 +1541,9 @@ function KampusAkisi({
           )}
           <div>
             <h1>{sayfaBasligi}</h1>
-            <span>{yenileniyor ? "Canlı akış yenileniyor..." : "Canlı kampüs ağı"}</span>
+            <span>
+              {yenileniyor ? "Canlı akış yenileniyor..." : "Canlı kampüs ağı"}
+            </span>
           </div>
         </header>
 
@@ -1477,21 +1589,36 @@ function KampusAkisi({
                 </button>
                 <div>
                   <h2>{goruntulenenProfil.full_name}</h2>
-                  <span className={`rol-rozeti rol-rozeti--${goruntulenenProfil.role}`}>
+                  <span
+                    className={`rol-rozeti rol-rozeti--${goruntulenenProfil.role}`}
+                  >
                     {rolAdi(goruntulenenProfil)}
                   </span>
                   <p>
-                    {goruntulenenProfil.faculty || "Manisa Celal Bayar Üniversitesi"}
+                    {goruntulenenProfil.faculty ||
+                      "Manisa Celal Bayar Üniversitesi"}
                     {goruntulenenProfil.department
                       ? ` · ${goruntulenenProfil.department}`
                       : ""}
                   </p>
                 </div>
                 <div className="kullanici-profil-istatistikleri">
-                  <div><strong>{goruntulenenGonderiSayisi}</strong><span>Gönderi</span></div>
-                  <div><strong>{goruntulenenTakipciSayisi}</strong><span>Takipçi</span></div>
-                  <div><strong>{goruntulenenTakipSayisi}</strong><span>Takip edilen</span></div>
-                  <div><strong>{goruntulenenProfil.xp}</strong><span>XP</span></div>
+                  <div>
+                    <strong>{goruntulenenGonderiSayisi}</strong>
+                    <span>Gönderi</span>
+                  </div>
+                  <div>
+                    <strong>{goruntulenenTakipciSayisi}</strong>
+                    <span>Takipçi</span>
+                  </div>
+                  <div>
+                    <strong>{goruntulenenTakipSayisi}</strong>
+                    <span>Takip edilen</span>
+                  </div>
+                  <div>
+                    <strong>{goruntulenenProfil.xp}</strong>
+                    <span>XP</span>
+                  </div>
                 </div>
                 <div className="kullanici-profil-alanlari">
                   {goruntulenenProfil.expertise_areas.map((alan) => (
@@ -1610,9 +1737,7 @@ function KampusAkisi({
               </label>
               <button
                 type="button"
-                disabled={
-                  hesapSilmeMetni !== "HESABIMI SİL" || hesapSiliniyor
-                }
+                disabled={hesapSilmeMetni !== "HESABIMI SİL" || hesapSiliniyor}
                 onClick={() => void hesabimiSil()}
               >
                 {hesapSiliniyor ? "Hesap siliniyor..." : "Hesabımı kalıcı sil"}
@@ -1629,7 +1754,10 @@ function KampusAkisi({
                     <span>{okunmamisBildirimSayisi} okunmamış bildirim</span>
                   </div>
                   {okunmamisBildirimSayisi > 0 && (
-                    <button type="button" onClick={() => void tumBildirimleriOku()}>
+                    <button
+                      type="button"
+                      onClick={() => void tumBildirimleriOku()}
+                    >
                       Tümünü okundu yap
                     </button>
                   )}
@@ -1641,12 +1769,18 @@ function KampusAkisi({
                       const bilgi = bildirimBilgisi(item);
                       return (
                         <button
-                          className={item.read_at ? "bildirim-satiri" : "bildirim-satiri bildirim-satiri--yeni"}
+                          className={
+                            item.read_at
+                              ? "bildirim-satiri"
+                              : "bildirim-satiri bildirim-satiri--yeni"
+                          }
                           type="button"
                           key={item.id}
                           onClick={() => void bildirimiOku(item)}
                         >
-                          <span className="bildirim-satiri__simge">{bilgi.simge}</span>
+                          <span className="bildirim-satiri__simge">
+                            {bilgi.simge}
+                          </span>
                           <div>
                             <strong>{bilgi.metin}</strong>
                             <small>{tarihYaz(item.created_at)}</small>
@@ -1659,74 +1793,24 @@ function KampusAkisi({
                 ) : (
                   <div className="bos-durum">
                     <strong>Henüz bildirimin yok.</strong>
-                    <span>Yeni etkileşimler burada gerçek zamanlı görünecek.</span>
+                    <span>
+                      Yeni etkileşimler burada gerçek zamanlı görünecek.
+                    </span>
                   </div>
                 )}
               </section>
             )}
 
-            {sekme === "raporlar" && moderatorMu && (
-              <section className="rapor-merkezi">
-                <div className="rapor-merkezi__ust">
-                  <div>
-                    <span>MODERASYON</span>
-                    <h2>Topluluk şikâyetleri</h2>
-                  </div>
-                  <strong>{bekleyenRaporSayisi} açık rapor</strong>
-                </div>
-
-                {veriler.raporlar.length > 0 ? (
-                  <div className="rapor-listesi">
-                    {veriler.raporlar.map((rapor) => {
-                      const bildiren = profilHaritasi.get(rapor.reporter_id);
-                      return (
-                        <article className={`rapor-karti rapor-karti--${rapor.status}`} key={rapor.id}>
-                          <div className="rapor-karti__ust">
-                            <div>
-                              <strong>{raporNedeniAdi(rapor.reason)}</strong>
-                              <span>
-                                {rapor.target_type === "post"
-                                  ? "Gönderi"
-                                  : rapor.target_type === "comment"
-                                    ? "Yorum"
-                                    : rapor.target_type === "community"
-                                      ? "Topluluk"
-                                      : "Profil"}
-                              </span>
-                            </div>
-                            <small>{tarihYaz(rapor.created_at)}</small>
-                          </div>
-                          <p>{rapor.details || "Ek açıklama verilmedi."}</p>
-                          <small>
-                            Bildiren: {bildiren?.full_name || "Öğrenci"} · Durum: {rapor.status}
-                          </small>
-                          {(rapor.status === "pending" || rapor.status === "reviewed") && (
-                            <div className="rapor-karti__aksiyonlar">
-                              <button
-                                type="button"
-                                onClick={() => void raporuSonuclandir(rapor.id, "resolved")}
-                              >
-                                İşlem yapıldı
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => void raporuSonuclandir(rapor.id, "rejected")}
-                              >
-                                İhlal yok
-                              </button>
-                            </div>
-                          )}
-                        </article>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="bos-durum">
-                    <strong>Henüz şikâyet yok.</strong>
-                    <span>Yeni raporlar yalnızca yetkili kişilere burada görünür.</span>
-                  </div>
-                )}
-              </section>
+            {sekme === "raporlar" && (
+              <Suspense fallback={<p role="status">Şikâyetler yükleniyor…</p>}>
+                <ReportCenter
+                  reports={veriler.raporlar}
+                  canModerate={moderatorMu}
+                  isFounder={profil.role === "founder"}
+                  onRefresh={() => verileriGetir(true)}
+                  selectedReportId={selectedReportId}
+                />
+              </Suspense>
             )}
 
             {sekme === "arastir" && (
@@ -1748,23 +1832,55 @@ function KampusAkisi({
                     <span>ÖĞRENCİ TOPLULUKLARI</span>
                     <h2>Birlikte öğren, birlikte paylaş</h2>
                   </div>
-                  <button type="button" onClick={() => setToplulukFormuAcik((acik) => !acik)}>
+                  <button
+                    type="button"
+                    onClick={() => setToplulukFormuAcik((acik) => !acik)}
+                  >
                     + Topluluk kur
                   </button>
                 </div>
 
                 {toplulukFormuAcik && (
-                  <form className="topluluk-formu" onSubmit={(event) => void toplulukOlustur(event)}>
-                    <input value={toplulukAdi} onChange={(event) => setToplulukAdi(event.target.value)} minLength={3} maxLength={60} placeholder="Topluluğun adı" required />
-                    <textarea value={toplulukAciklamasi} onChange={(event) => setToplulukAciklamasi(event.target.value)} maxLength={500} placeholder="Bu topluluk ne için var?" required />
-                    <input value={toplulukBolumu} onChange={(event) => setToplulukBolumu(event.target.value)} placeholder="Bölüm veya alan (isteğe bağlı)" />
+                  <form
+                    className="topluluk-formu"
+                    onSubmit={(event) => void toplulukOlustur(event)}
+                  >
+                    <input
+                      value={toplulukAdi}
+                      onChange={(event) => setToplulukAdi(event.target.value)}
+                      minLength={3}
+                      maxLength={60}
+                      placeholder="Topluluğun adı"
+                      required
+                    />
+                    <textarea
+                      value={toplulukAciklamasi}
+                      onChange={(event) =>
+                        setToplulukAciklamasi(event.target.value)
+                      }
+                      maxLength={500}
+                      placeholder="Bu topluluk ne için var?"
+                      required
+                    />
+                    <input
+                      value={toplulukBolumu}
+                      onChange={(event) =>
+                        setToplulukBolumu(event.target.value)
+                      }
+                      placeholder="Bölüm veya alan (isteğe bağlı)"
+                    />
                     <button type="submit">Topluluğu oluştur</button>
                   </form>
                 )}
 
                 <div className="topluluk-listesi">
-                  {veriler.topluluklar.length > 0 ? veriler.topluluklar.map(toplulukKarti) : (
-                    <div className="bos-durum"><strong>Henüz topluluk yok.</strong><span>İlk topluluğu sen kurabilirsin.</span></div>
+                  {veriler.topluluklar.length > 0 ? (
+                    veriler.topluluklar.map(toplulukKarti)
+                  ) : (
+                    <div className="bos-durum">
+                      <strong>Henüz topluluk yok.</strong>
+                      <span>İlk topluluğu sen kurabilirsin.</span>
+                    </div>
                   )}
                 </div>
               </section>
@@ -1783,11 +1899,21 @@ function KampusAkisi({
                   )}
                 </div>
                 <div>
-                  <span>{seciliToplulukBilgisi.department || "Tüm kampüs"}</span>
+                  <span>
+                    {seciliToplulukBilgisi.department || "Tüm kampüs"}
+                  </span>
                   <h2>{seciliToplulukBilgisi.name}</h2>
                   <p>{seciliToplulukBilgisi.description}</p>
                   <small>
-                    {veriler.uyelikler.filter((item) => item.community_id === seciliToplulukBilgisi.id).length} üye · Kurucu {profilHaritasi.get(seciliToplulukBilgisi.founder_id)?.full_name || "Öğrenci"}
+                    {
+                      veriler.uyelikler.filter(
+                        (item) =>
+                          item.community_id === seciliToplulukBilgisi.id,
+                      ).length
+                    }{" "}
+                    üye · Kurucu{" "}
+                    {profilHaritasi.get(seciliToplulukBilgisi.founder_id)
+                      ?.full_name || "Öğrenci"}
                   </small>
                 </div>
                 <div className="topluluk-kapak__aksiyonlar">
@@ -1821,17 +1947,23 @@ function KampusAkisi({
                         type="button"
                         disabled={Boolean(medyaYukleniyor)}
                         onClick={() =>
-                          void medyayiKaldir(
-                            "community",
-                            seciliToplulukBilgisi,
-                          )
+                          void medyayiKaldir("community", seciliToplulukBilgisi)
                         }
                       >
                         Logoyu kaldır
                       </button>
                     )}
-                  <button type="button" onClick={() => void uyelikDegistir(seciliToplulukBilgisi)}>
-                    {veriler.uyelikler.some((item) => item.community_id === seciliToplulukBilgisi.id && item.user_id === kullanici.id) ? "Üyesin" : "Topluluğa katıl"}
+                  <button
+                    type="button"
+                    onClick={() => void uyelikDegistir(seciliToplulukBilgisi)}
+                  >
+                    {veriler.uyelikler.some(
+                      (item) =>
+                        item.community_id === seciliToplulukBilgisi.id &&
+                        item.user_id === kullanici.id,
+                    )
+                      ? "Üyesin"
+                      : "Topluluğa katıl"}
                   </button>
                   {seciliToplulukBilgisi.founder_id !== kullanici.id && (
                     <button
@@ -1862,7 +1994,10 @@ function KampusAkisi({
             )}
 
             {(sekme === "anasayfa" || sekme === "takip" || seciliTopluluk) && (
-              <form className="gonderi-olusturucu" onSubmit={(event) => void gonderiPaylas(event)}>
+              <form
+                className="gonderi-olusturucu"
+                onSubmit={(event) => void gonderiPaylas(event)}
+              >
                 <span className="akis-avatar">{avatarIcerigi(profil)}</span>
                 <div>
                   <textarea
@@ -1870,22 +2005,51 @@ function KampusAkisi({
                     value={gonderiMetni}
                     onChange={(event) => setGonderiMetni(event.target.value)}
                     maxLength={2000}
-                    placeholder={seciliToplulukBilgisi ? `${seciliToplulukBilgisi.name} topluluğuna ne paylaşacaksın?` : "Kampüse ne öğretmek istersin? Bir deneyim, soru veya kaynak paylaş..."}
+                    placeholder={
+                      seciliToplulukBilgisi
+                        ? `${seciliToplulukBilgisi.name} topluluğuna ne paylaşacaksın?`
+                        : "Kampüse ne öğretmek istersin? Bir deneyim, soru veya kaynak paylaş..."
+                    }
                   />
                   <div className="gonderi-ayarlari">
-                    <select value={kategori} onChange={(event) => setKategori(event.target.value)} aria-label="Gönderi kategorisi">
-                      {kategoriler.map((item) => <option key={item}>{item}</option>)}
+                    <select
+                      value={kategori}
+                      onChange={(event) => setKategori(event.target.value)}
+                      aria-label="Gönderi kategorisi"
+                    >
+                      {kategoriler.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
                     </select>
-                    <input value={bolum} onChange={(event) => setBolum(event.target.value)} placeholder="Bölüm" />
-                    <input value={etiketMetni} onChange={(event) => setEtiketMetni(event.target.value)} placeholder="Etiketler: react, staj" />
-                    <select value={hedefTopluluk} onChange={(event) => setHedefTopluluk(event.target.value)} aria-label="Paylaşım hedefi">
+                    <input
+                      value={bolum}
+                      onChange={(event) => setBolum(event.target.value)}
+                      placeholder="Bölüm"
+                    />
+                    <input
+                      value={etiketMetni}
+                      onChange={(event) => setEtiketMetni(event.target.value)}
+                      placeholder="Etiketler: react, staj"
+                    />
+                    <select
+                      value={hedefTopluluk}
+                      onChange={(event) => setHedefTopluluk(event.target.value)}
+                      aria-label="Paylaşım hedefi"
+                    >
                       <option value="">Herkese açık</option>
-                      {uyeOldugumTopluluklar.map((topluluk) => <option value={topluluk.id} key={topluluk.id}>{topluluk.name}</option>)}
+                      {uyeOldugumTopluluklar.map((topluluk) => (
+                        <option value={topluluk.id} key={topluluk.id}>
+                          {topluluk.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="gonderi-olusturucu__alt">
                     <span>{gonderiMetni.length}/2000</span>
-                    <button type="submit" disabled={!gonderiMetni.trim() || paylasiliyor}>
+                    <button
+                      type="submit"
+                      disabled={!gonderiMetni.trim() || paylasiliyor}
+                    >
                       {paylasiliyor ? "Paylaşılıyor..." : "Paylaş"}
                     </button>
                   </div>
@@ -1893,34 +2057,65 @@ function KampusAkisi({
               </form>
             )}
 
-            {sekme === "arastir" && arama.trim() && (toplulukAramaSonuclari.length > 0 || kisiAramaSonuclari.length > 0) && (
-              <section className="arama-ek-sonuclari">
-                {kisiAramaSonuclari.map((kisi) => (
-                  <div className="kisi-sonucu" key={kisi.id}>
-                    <span>{avatarIcerigi(kisi)}</span>
-                    <div>
-                      <button className="kisi-profili-buton" type="button" onClick={() => profiliAc(kisi.id)}>{kisi.full_name}</button>
-                      <small>{kisi.department || rolAdi(kisi)}</small>
+            {sekme === "arastir" &&
+              arama.trim() &&
+              (toplulukAramaSonuclari.length > 0 ||
+                kisiAramaSonuclari.length > 0) && (
+                <section className="arama-ek-sonuclari">
+                  {kisiAramaSonuclari.map((kisi) => (
+                    <div className="kisi-sonucu" key={kisi.id}>
+                      <span>{avatarIcerigi(kisi)}</span>
+                      <div>
+                        <button
+                          className="kisi-profili-buton"
+                          type="button"
+                          onClick={() => profiliAc(kisi.id)}
+                        >
+                          {kisi.full_name}
+                        </button>
+                        <small>{kisi.department || rolAdi(kisi)}</small>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => void takipDegistir(kisi.id)}
+                      >
+                        {takipEttigimIdler.has(kisi.id)
+                          ? "Takipte"
+                          : "Takip et"}
+                      </button>
                     </div>
-                    <button type="button" onClick={() => void takipDegistir(kisi.id)}>{takipEttigimIdler.has(kisi.id) ? "Takipte" : "Takip et"}</button>
-                  </div>
-                ))}
-                {toplulukAramaSonuclari.map(toplulukKarti)}
-              </section>
-            )}
+                  ))}
+                  {toplulukAramaSonuclari.map(toplulukKarti)}
+                </section>
+              )}
 
             {hata && <div className="akis-hatasi">{hata}</div>}
             {yukleniyor ? (
-              <div className="akis-yukleniyor">Kampüs bilgileri yükleniyor...</div>
-            ) : (["anasayfa", "takip", "arastir"].includes(sekme) || Boolean(seciliTopluluk)) && (
-              <section className="gonderi-listesi">
-                {gorunurGonderiler.length > 0 ? gorunurGonderiler.map(gonderiKarti) : (
-                  <div className="bos-durum">
-                    <strong>{sekme === "takip" ? "Takip akışın henüz sessiz." : "Burada henüz bir paylaşım yok."}</strong>
-                    <span>{sekme === "takip" ? "Öğrencileri takip ettiğinde paylaşımları burada görünür." : "İlk faydalı bilgiyi sen paylaşabilirsin."}</span>
-                  </div>
-                )}
-              </section>
+              <div className="akis-yukleniyor">
+                Kampüs bilgileri yükleniyor...
+              </div>
+            ) : (
+              (["anasayfa", "takip", "arastir"].includes(sekme) ||
+                Boolean(seciliTopluluk)) && (
+                <section className="gonderi-listesi">
+                  {gorunurGonderiler.length > 0 ? (
+                    gorunurGonderiler.map(gonderiKarti)
+                  ) : (
+                    <div className="bos-durum">
+                      <strong>
+                        {sekme === "takip"
+                          ? "Takip akışın henüz sessiz."
+                          : "Burada henüz bir paylaşım yok."}
+                      </strong>
+                      <span>
+                        {sekme === "takip"
+                          ? "Öğrencileri takip ettiğinde paylaşımları burada görünür."
+                          : "İlk faydalı bilgiyi sen paylaşabilirsin."}
+                      </span>
+                    </div>
+                  )}
+                </section>
+              )
             )}
           </>
         )}
@@ -1929,56 +2124,178 @@ function KampusAkisi({
       <aside className="sag-panel">
         <label className="hizli-arama">
           <span>⌕</span>
-          <input value={arama} onChange={(event) => setArama(event.target.value)} onFocus={() => sekmeyeGit("arastir")} placeholder="KampüsHafıza'da ara" />
+          <input
+            value={arama}
+            onChange={(event) => setArama(event.target.value)}
+            onFocus={() => sekmeyeGit("arastir")}
+            placeholder="KampüsHafıza'da ara"
+          />
         </label>
 
         <section className="yan-kart">
-          <div className="yan-kart__baslik"><strong>Canlı ağ</strong><span className="canli-nokta" /></div>
+          <div className="yan-kart__baslik">
+            <strong>Canlı ağ</strong>
+            <span className="canli-nokta" />
+          </div>
           <div className="canli-sayilar">
-            <div><strong>{veriler.gonderiler.filter((item) => item.moderation_status === "approved").length}</strong><span>Paylaşım</span></div>
-            <div><strong>{veriler.topluluklar.length}</strong><span>Topluluk</span></div>
-            <div><strong>{veriler.profiller.length}</strong><span>Öğrenci</span></div>
+            <div>
+              <strong>
+                {
+                  veriler.gonderiler.filter(
+                    (item) => item.moderation_status === "approved",
+                  ).length
+                }
+              </strong>
+              <span>Paylaşım</span>
+            </div>
+            <div>
+              <strong>{veriler.topluluklar.length}</strong>
+              <span>Topluluk</span>
+            </div>
+            <div>
+              <strong>{veriler.profiller.length}</strong>
+              <span>Öğrenci</span>
+            </div>
           </div>
         </section>
 
         <section className="yan-kart">
-          <div className="yan-kart__baslik"><strong>Kimi takip etmeli?</strong></div>
-          {takipOnerileri.length > 0 ? takipOnerileri.map((kisi) => (
-            <div className="takip-onerisi" key={kisi.id}>
-              <span>{avatarIcerigi(kisi)}</span>
-              <div>
-                <button className="kisi-profili-buton" type="button" onClick={() => profiliAc(kisi.id)}>{kisi.full_name}</button>
-                <small>{kisi.department || rolAdi(kisi)}</small>
+          <div className="yan-kart__baslik">
+            <strong>Kimi takip etmeli?</strong>
+          </div>
+          {takipOnerileri.length > 0 ? (
+            takipOnerileri.map((kisi) => (
+              <div className="takip-onerisi" key={kisi.id}>
+                <span>{avatarIcerigi(kisi)}</span>
+                <div>
+                  <button
+                    className="kisi-profili-buton"
+                    type="button"
+                    onClick={() => profiliAc(kisi.id)}
+                  >
+                    {kisi.full_name}
+                  </button>
+                  <small>{kisi.department || rolAdi(kisi)}</small>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => void takipDegistir(kisi.id)}
+                >
+                  Takip et
+                </button>
               </div>
-              <button type="button" onClick={() => void takipDegistir(kisi.id)}>Takip et</button>
-            </div>
-          )) : <p className="yan-kart__bos">Şimdilik yeni bir öneri yok.</p>}
+            ))
+          ) : (
+            <p className="yan-kart__bos">Şimdilik yeni bir öneri yok.</p>
+          )}
         </section>
 
         <section className="yan-kart">
-          <div className="yan-kart__baslik"><strong>Toplulukları keşfet</strong></div>
+          <div className="yan-kart__baslik">
+            <strong>Toplulukları keşfet</strong>
+          </div>
           {veriler.topluluklar.slice(0, 3).map((topluluk) => (
-            <button className="yan-topluluk" type="button" key={topluluk.id} onClick={() => topluluguAc(topluluk.id)}>
+            <button
+              className="yan-topluluk"
+              type="button"
+              key={topluluk.id}
+              onClick={() => topluluguAc(topluluk.id)}
+            >
               <span>
                 {topluluk.logo_url ? (
                   <img src={topluluk.logo_url} alt="" />
                 ) : (
                   "◎"
                 )}
-              </span><div><strong>{topluluk.name}</strong><small>{veriler.uyelikler.filter((item) => item.community_id === topluluk.id).length} üye</small></div>
+              </span>
+              <div>
+                <strong>{topluluk.name}</strong>
+                <small>
+                  {
+                    veriler.uyelikler.filter(
+                      (item) => item.community_id === topluluk.id,
+                    ).length
+                  }{" "}
+                  üye
+                </small>
+              </div>
             </button>
           ))}
-          {veriler.topluluklar.length === 0 && <p className="yan-kart__bos">İlk topluluk kurulmayı bekliyor.</p>}
+          {veriler.topluluklar.length === 0 && (
+            <p className="yan-kart__bos">İlk topluluk kurulmayı bekliyor.</p>
+          )}
         </section>
       </aside>
 
       <nav className="mobil-menu" aria-label="Mobil uygulama menüsü">
-        <button className={sekme === "anasayfa" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("anasayfa")}><span>⌂</span><small>Ana Sayfa</small></button>
-        <button className={sekme === "takip" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("takip")}><span>◉</span><small>Takip</small></button>
-        <button className="mobil-paylas" type="button" onClick={() => sekmeyeGit("anasayfa")}>+</button>
-        <button className={sekme === "arastir" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("arastir")}><span>⌕</span><small>Araştır</small></button>
-        <button className={sekme === "bildirimler" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("bildirimler")}><span className="mobil-bildirim-simgesi">♧{okunmamisBildirimSayisi > 0 && <b>{Math.min(okunmamisBildirimSayisi, 9)}</b>}</span><small>Bildirim</small></button>
-        <button className={sekme === "topluluklar" ? "aktif" : ""} type="button" onClick={() => sekmeyeGit("topluluklar")}><span>◎</span><small>Topluluk</small></button>
+        <button
+          className={sekme === "anasayfa" ? "aktif" : ""}
+          type="button"
+          onClick={() => sekmeyeGit("anasayfa")}
+        >
+          <span>
+            <Icon name="home" />
+          </span>
+          <small>Ana Sayfa</small>
+        </button>
+        <button
+          className={sekme === "takip" ? "aktif" : ""}
+          type="button"
+          onClick={() => sekmeyeGit("takip")}
+        >
+          <span>
+            <Icon name="users" />
+          </span>
+          <small>Takip</small>
+        </button>
+        <button
+          className="mobil-paylas"
+          type="button"
+          onClick={() => sekmeyeGit("anasayfa")}
+        >
+          +
+        </button>
+        <button
+          className={sekme === "arastir" ? "aktif" : ""}
+          type="button"
+          onClick={() => sekmeyeGit("arastir")}
+        >
+          <span>
+            <Icon name="search" />
+          </span>
+          <small>Araştır</small>
+        </button>
+        <button
+          className={sekme === "bildirimler" ? "aktif" : ""}
+          type="button"
+          onClick={() => sekmeyeGit("bildirimler")}
+        >
+          <span className="mobil-bildirim-simgesi">
+            <Icon name="bell" />
+            {okunmamisBildirimSayisi > 0 && (
+              <b>{Math.min(okunmamisBildirimSayisi, 9)}</b>
+            )}
+          </span>
+          <small>Bildirim</small>
+        </button>
+        <button
+          className={sekme === "topluluklar" ? "aktif" : ""}
+          type="button"
+          onClick={() => sekmeyeGit("topluluklar")}
+        >
+          <span>
+            <Icon name="layers" />
+          </span>
+          <small>Topluluk</small>
+        </button>
+        <button
+          className={sekme === "raporlar" ? "aktif" : ""}
+          type="button"
+          onClick={() => sekmeyeGit("raporlar")}
+        >
+          <Icon name="flag" />
+          <small>Şikâyetler</small>
+        </button>
       </nav>
     </div>
   );

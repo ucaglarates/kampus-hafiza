@@ -1,4 +1,4 @@
-import type { KullaniciProfili } from "./profil";
+import type { ToplulukProfili } from "./profil";
 
 export type AkisSekmesi =
   | "anasayfa"
@@ -10,6 +10,9 @@ export type AkisSekmesi =
   | "profil";
 
 export type IcerikRaporu = {
+  content_snapshot: string | null;
+  resolution_note: string;
+  action_taken: string;
   id: string;
   reporter_id: string;
   target_type: "post" | "comment" | "community" | "profile";
@@ -51,6 +54,8 @@ export type ToplulukUyesi = {
 };
 
 export type Gonderi = {
+  is_active: boolean;
+  deactivated_at: string | null;
   id: string;
   author_id: string;
   community_id: string | null;
@@ -87,6 +92,8 @@ export type Takip = {
 };
 
 export type Bildirim = {
+  report_id: string | null;
+  message: string | null;
   id: string;
   recipient_id: string;
   actor_id: string | null;
@@ -96,7 +103,8 @@ export type Bildirim = {
     | "like"
     | "post_approved"
     | "post_rejected"
-    | "community_join";
+    | "community_join"
+    | "report_update";
   post_id: string | null;
   community_id: string | null;
   read_at: string | null;
@@ -105,7 +113,7 @@ export type Bildirim = {
 
 export type CanliSosyalVeriler = {
   gonderiler: Gonderi[];
-  profiller: KullaniciProfili[];
+  profiller: ToplulukProfili[];
   topluluklar: Topluluk[];
   uyelikler: ToplulukUyesi[];
   yorumlar: Yorum[];

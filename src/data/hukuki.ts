@@ -1,4 +1,4 @@
-export const HUKUKI_SURUM = "2026-08-01";
+export const HUKUKI_SURUM = "2026-10-22";
 
 export type HukukiSekme =
   | "aydinlatma"
